@@ -30,6 +30,8 @@ class WarehouseController extends Controller
         ]);
 
 
+
+
         $locationData = [
             'city_id' => $request->city_id,
             'address' => $request->location,
