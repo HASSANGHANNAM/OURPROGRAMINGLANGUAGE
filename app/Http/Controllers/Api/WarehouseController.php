@@ -28,6 +28,8 @@ class WarehouseController extends Controller
             "city_id" => "required|integr",
             "location" => "required|max:45|string"
         ]);
+
+
         $locationData = [
             'city_id' => $request->city_id,
             'address' => $request->location,
