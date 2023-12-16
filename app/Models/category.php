@@ -12,4 +12,8 @@ class category extends Model
     protected $table = "category";
     protected $fillable = ['Category_name', 'Arabic_Category_name'];
     public $timestamps = true;
+    public function product()
+    {
+        return $this->belongsToMany(product::class);
+    }
 }

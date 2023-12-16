@@ -15,7 +15,15 @@ class warehouse extends Model
 
     public function owner()
     {
-        return $this->belongsTo(owner::class);
+        return $this->hasOne(owner::class);
+    }
+    public function order()
+    {
+        return $this->belongsToMany(order::class);
+    }
+    public function products_warehouse()
+    {
+        return $this->belongsToMany(products_warehouse::class);
     }
     public function location()
     {

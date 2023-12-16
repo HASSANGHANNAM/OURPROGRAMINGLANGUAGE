@@ -10,7 +10,7 @@ class city extends Model
 {
     use HasFactory, HasApiTokens;
     protected $table = "city";
-    protected $fillable = ['City_name'];
+    protected $fillable = ['City_name', 'City_Arabic_name'];
     public $timestamps = true;
     public function user()
     {

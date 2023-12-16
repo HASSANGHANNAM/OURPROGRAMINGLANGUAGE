@@ -3,7 +3,10 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\order;
+use App\Models\order_product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class orderController extends Controller
 {
@@ -11,76 +14,76 @@ class orderController extends Controller
     {
         $orData = $request->validate([
             "warehouse_id" => "required|integer",
-            "Price" => "required|integer",
-            "category_id" => "required|integer",
-            "made_by_id" => "required|integer",
-            "image" => "required|string",
-            "marketing_name" => "required|string|max:45",
-            "scientific_name" => "required|string|max:45",
-            "arabic_name" => "required|string|max:45",
-            "exp_date" => "required", //date
-            "Quantity" => "required|integer"
+            "phatmacist_id" => "required|integer",
+            "Quantity" => "required|integer",
+            "product_id" => "required|integer",
         ]);
-        $pdata = ['Price' => $proData['Price'], 'category_id' => $proData['category_id'], 'made_by_id' => $proData['made_by_id'], 'image' => $proData['image'], 'marketing_name' => $proData['marketing_name'], 'scientific_name' => $proData['scientific_name'], 'arabic_name' => $proData['arabic_name'], 'exp_date' => $proData['exp_date']];
-        $pp = product::create($pdata);
-        $pwdata = ['products_id' => $pp['id'], 'warehouse_id' => $proData['warehouse_id'], 'Quantity' => $proData['Quantity']];
-        $pw = products_warehouse::create($pwdata);
+        $ordata = [
+            'warehouse_id' => $orData['warehouse_id'],
+            'phatmacist_id' => $orData['phatmacist_id'],
+            'status' => "In preparation",
+            'payment_status' => "unpaid"
+        ];
+        $orDa = order::create($ordata);
+        $orprodata = [
+            'Quantity' => $orData['Quantity'],
+            'product_id' => $orData['product_id'],
+            'order_id' => $orDa['id']
+        ];
+        $pp = order_product::create($orprodata);
         return response()->json([
             "status" => 1,
             "message" => "succes"
         ]);
     }
-
+    // TODO:
     public function update_order(Request $request)
     {
-        $proData = $request->validate([
-            "Price" => "required|integer",
-            "category_id" => "required|integer",
-            "made_by_id" => "required|integer",
-            "image" => "required|string",
-            "marketing_name" => "required|string|max:45",
-            "scientific_name" => "required|string|max:45",
-            "'arabic_name" => "required|string|max:45",
-            "exp_date" => "required", //date
-            "Quantity" => "required|integer"
+        $orData = $request->validate([
+            "warehouse_id" => "required|integer",
+            "phatmacist_id" => "required|integer",
+            "Quantity" => "required|integer",
+            "product_id" => "required|integer",
         ]);
-        $pdata = ['Price' => $proData['Price'], 'category_id' => $proData['category_id'], 'made_by_id' => $proData['made_by_id'], 'image' => $proData['image'], 'marketing_name' => $proData['marketing_name'], 'scientific_name' => $proData['scientific_name'], 'arabic_name' => $proData['arabic_name'], 'exp_date' => $proData['exp_date']];
-        $pp = product::create($pdata);
-        $pwdata = ['products_id' => $pdata['id'], 'warehouse_id' => 1, 'Quantity' => $proData['Quantity']];
-        $pw = products_warehouse::create($pwdata);
-        //city::where('id', $request->id)->update(array('City_name' => $request->name));
+        $ordata = [
+            'warehouse_id' => $orData['warehouse_id'],
+            'phatmacist_id' => $orData['phatmacist_id'],
+            'status' => "In preparation",
+            'payment_status' => "unpaid"
+        ];
+        $orDa = order::create($ordata);
+        $orprodata = [
+            'Quantity' => $orData['Quantity'],
+            'product_id' => $orData['product_id'],
+            'order_id' => $orDa['id']
+        ];
+        $pp = order_product::create($orprodata);
         return response()->json([
             "status" => 1,
             "message" => "succes"
         ]);
     }
-    public function getAllOrders()
+    // TODO:
+    public function getAllOrders($id)
     {
-        $proData = DB::table('products')->select('id', 'Price', 'category_id', 'made_by_id', 'image', 'marketing_name', 'scientific_name', 'arabic_name', 'exp_date')->orderBy('id', 'ASC')->get();
+        $orData = DB::table('order')->where('phatmacist_id', $id)->orderBy('order_id', 'ASC')->get();
+        $allorders = [];
+        foreach ($orData as $o) {
+            $allorders += DB::table('orderProducts')->where('order_id', $o->id)->get();
+        }
         return response()->json([
             "status" => 1,
             "message" => "succes",
-            "data" => $proData
+            "data" => $orData + $allorders
         ]);
     }
     public function update_order_status(Request $request)
     {
-        $proData = $request->validate([
-            "Price" => "required|integer",
-            "category_id" => "required|integer",
-            "made_by_id" => "required|integer",
-            "image" => "required|string",
-            "marketing_name" => "required|string|max:45",
-            "scientific_name" => "required|string|max:45",
-            "'arabic_name" => "required|string|max:45",
-            "exp_date" => "required", //date
-            "Quantity" => "required|integer"
+        $orData = $request->validate([
+            "order_id" => "required|integer",
+            "order_status" => "required|string",
         ]);
-        $pdata = ['Price' => $proData['Price'], 'category_id' => $proData['category_id'], 'made_by_id' => $proData['made_by_id'], 'image' => $proData['image'], 'marketing_name' => $proData['marketing_name'], 'scientific_name' => $proData['scientific_name'], 'arabic_name' => $proData['arabic_name'], 'exp_date' => $proData['exp_date']];
-        $pp = product::create($pdata);
-        $pwdata = ['products_id' => $pdata['id'], 'warehouse_id' => 1, 'Quantity' => $proData['Quantity']];
-        $pw = products_warehouse::create($pwdata);
-        //city::where('id', $request->id)->update(array('City_name' => $request->name));
+        order::where('id', $request->order_id)->update(array('status' => $request->order_status));
         return response()->json([
             "status" => 1,
             "message" => "succes"
@@ -88,22 +91,11 @@ class orderController extends Controller
     }
     public function update_order_status_payment(Request $request)
     {
-        $proData = $request->validate([
-            "Price" => "required|integer",
-            "category_id" => "required|integer",
-            "made_by_id" => "required|integer",
-            "image" => "required|string",
-            "marketing_name" => "required|string|max:45",
-            "scientific_name" => "required|string|max:45",
-            "'arabic_name" => "required|string|max:45",
-            "exp_date" => "required", //date
-            "Quantity" => "required|integer"
+        $orData = $request->validate([
+            "order_id" => "required|integer",
+            "order_payment_status" => "required|string",
         ]);
-        $pdata = ['Price' => $proData['Price'], 'category_id' => $proData['category_id'], 'made_by_id' => $proData['made_by_id'], 'image' => $proData['image'], 'marketing_name' => $proData['marketing_name'], 'scientific_name' => $proData['scientific_name'], 'arabic_name' => $proData['arabic_name'], 'exp_date' => $proData['exp_date']];
-        $pp = product::create($pdata);
-        $pwdata = ['products_id' => $pdata['id'], 'warehouse_id' => 1, 'Quantity' => $proData['Quantity']];
-        $pw = products_warehouse::create($pwdata);
-        //city::where('id', $request->id)->update(array('City_name' => $request->name));
+        order::where('id', $request->order_id)->update(array('payment_status' => $request->order_payment_status));
         return response()->json([
             "status" => 1,
             "message" => "succes"

@@ -49,6 +49,10 @@ class User extends Authenticatable
     }
     public function owner()
     {
-        return $this->belongsTo(owner::class);
+        return $this->belongsToMany(owner::class);
+    }
+    public function phatmacist()
+    {
+        return $this->belongsToMany(phatmacist::class);
     }
 }

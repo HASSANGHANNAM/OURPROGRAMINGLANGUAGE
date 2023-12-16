@@ -14,10 +14,10 @@ class owner extends Model
     public $timestamps = true;
     public function user()
     {
-        return $this->hasOne(User::class);
+        return $this->hasMany(User::class);
     }
     public function warehouse()
     {
-        return $this->hasMany(warehouse::class);
+        return $this->belongsToMany(warehouse::class);
     }
 }

@@ -10,14 +10,11 @@ use App\Models\owner;
 
 class ownerSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
         $user['type'] = 1;
-        $user['wallet'] = 10000;
-        $user['password'] = Hash::make("12345");
+        $user['wallet'] = 100000000;
+        $user['password'] = Hash::make("12345678");
         $user = User::create($user);
         $ownerData = [
             'status' => "acceptable",

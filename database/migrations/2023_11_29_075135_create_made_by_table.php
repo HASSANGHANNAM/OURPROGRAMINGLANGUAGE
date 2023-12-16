@@ -6,21 +6,15 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('made_by', function (Blueprint $table) {
             $table->id();
             $table->string('made_by_name', 45)->unique()->nullable();
+            $table->string('made_by_Arabic_name', 45)->unique()->nullable();
             $table->timestamps();
         });
     }
-
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('made_by');

@@ -12,4 +12,12 @@ class favorates extends Model
     protected $table = "favorates";
     protected $fillable = ['phamacist_id', 'products_id'];
     public $timestamps = true;
+    public function phatmacist()
+    {
+        return $this->hasMany(phatmacist::class);
+    }
+    public function product()
+    {
+        return $this->hasMany(product::class);
+    }
 }

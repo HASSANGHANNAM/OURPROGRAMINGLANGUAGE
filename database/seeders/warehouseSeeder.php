@@ -9,18 +9,15 @@ use App\Models\warehouse;
 
 class warehouseSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
         $locationData = [
             'city_id' => 1,
-            'address' => "alaa",
+            'address' => "Al Hamra streat",
         ];
         $location = location::create($locationData);
         $warehouseData = [
-            'Warehouse_name' => "hassan",
+            'Warehouse_name' => "nawwar",
             'location_id' => $location['id'],
             'owner_id' => 1
         ];

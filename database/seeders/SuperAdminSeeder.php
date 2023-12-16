@@ -10,9 +10,6 @@ use Illuminate\Support\Facades\Hash;
 
 class SuperAdminSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
         $user = ([
@@ -21,7 +18,7 @@ class SuperAdminSeeder extends Seeder
             "password" => "admin12345"
         ]);
         $user['type'] = 3;
-        $user['wallet'] = 10000;
+        $user['wallet'] = 10000000;
         $user['password'] = Hash::make($user['password']);
         $user = User::create($user);
         $superAdmin = [

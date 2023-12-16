@@ -10,6 +10,14 @@ class order_product extends Model
 {
     use HasFactory, HasApiTokens;
     protected $table = "order_products";
-    protected $fillable = ['order_id', 'number_of_produts', 'Product_name'];
+    protected $fillable = ['order_id', '[number_of_produts]', 'Product_id'];
     public $timestamps = true;
+    public function order()
+    {
+        return $this->hasMany(order::class);
+    }
+    public function product()
+    {
+        return $this->hasMany(product::class);
+    }
 }

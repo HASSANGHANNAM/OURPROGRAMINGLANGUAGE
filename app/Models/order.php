@@ -12,4 +12,16 @@ class order extends Model
     protected $table = "order";
     protected $fillable = ['status', 'payment_status', 'warehouse_id', 'phatmacist_id'];
     public $timestamps = true;
+    public function phatmacist()
+    {
+        return $this->hasMany(phatmacist::class);
+    }
+    public function warehouse()
+    {
+        return $this->hasMany(warehouse::class);
+    }
+    public function order_product()
+    {
+        return $this->belongsToMany(order_product::class);
+    }
 }

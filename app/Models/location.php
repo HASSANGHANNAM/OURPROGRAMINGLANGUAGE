@@ -16,4 +16,12 @@ class location extends Model
     {
         return $this->hasOne(city::class);
     }
+    public function warehouse()
+    {
+        return $this->belongsTo(warehouse::class);
+    }
+    public function phatmacist()
+    {
+        return $this->belongsTo(phatmacist::class);
+    }
 }
