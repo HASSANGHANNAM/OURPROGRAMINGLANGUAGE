@@ -13,6 +13,7 @@ class categoryController extends Controller
     {
         $categoryData = $request->validate([
             "Category_name" => "required|unique:category|max:45|string",
+            "Arabic_Category_name" => "required|unique:category|max:45|string",
         ]);
         $categoryData = category::create($categoryData);
         return response()->json([
@@ -24,9 +25,10 @@ class categoryController extends Controller
     {
         $request->validate([
             "Category_name" => "required|unique:category|max:45|string",
+            "Arabic_Category_name" => "required|unique:category|max:45|string",
             "id" => "required"
         ]);
-        category::where('id', $request->id)->update(array('Category_name' => $request->Category_name));
+        category::where('id', $request->id)->update(array('Category_name' => $request->Category_name, 'Arabic_Category_name' => $request->Arabic_Category_name));
         return response()->json([
             "status" => 1,
             "message" => "succes"
@@ -34,7 +36,7 @@ class categoryController extends Controller
     }
     public function getAllCategorys()
     {
-        $categorys = DB::table('category')->select('id', 'Category_name')->orderBy('id', 'ASC')->get();
+        $categorys = DB::table('category')->select('id', 'Category_name', 'Arabic_Category_name')->orderBy('id', 'ASC')->get();
         return response()->json([
             "status" => 1,
             "message" => "succes",

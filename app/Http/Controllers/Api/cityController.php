@@ -14,6 +14,7 @@ class cityController extends Controller
     {
         $cityData = $request->validate([
             "City_name" => "required|unique:city|max:45|string",
+            "City_Arabic_name" => "required|unique:city|max:45|string",
         ]);
         $cityData = city::create($cityData);
         return response()->json([
@@ -25,9 +26,10 @@ class cityController extends Controller
     {
         $request->validate([
             "City_name" => "required|unique:city|max:45|string",
+            "City_Arabic_name" => "required|unique:city|max:45|string",
             "id" => "required"
         ]);
-        city::where('id', $request->id)->update(array('City_name' => $request->City_name));
+        city::where('id', $request->id)->update(array('City_name' => $request->City_name, 'City_Arabic_name' => $request->City_Arabic_name));
         return response()->json([
             "status" => 1,
             "message" => "succes"
@@ -35,7 +37,7 @@ class cityController extends Controller
     }
     public function getAllCitys()
     {
-        $citys = DB::table('city')->select('id', 'City_name')->orderBy('id', 'ASC')->get();
+        $citys = DB::table('city')->select('id', 'City_name', 'City_Arabic_name')->orderBy('id', 'ASC')->get();
         return response()->json([
             "status" => 1,
             "message" => "succes",

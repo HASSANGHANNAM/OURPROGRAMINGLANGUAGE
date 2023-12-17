@@ -14,6 +14,8 @@ class ownerSeeder extends Seeder
     {
         $user['type'] = 1;
         $user['wallet'] = 100000000;
+        $user['Email_Address'] = "omar@gmail.com";
+        $user['Phone_number'] = "0934583838";
         $user['password'] = Hash::make("12345678");
         $user = User::create($user);
         $ownerData = [

@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\MainController;
 use App\Http\Controllers\Api\productController;
+use App\Http\Controllers\Api\searchController;
 use App\Http\Controllers\Api\WarehouseController;
 /*
 |--------------------------------------------------------------------------
@@ -49,5 +50,7 @@ Route::get('/getAllCitys', [cityController::class, 'getAllCitys']);
 Route::get('/getAllCategorys', [categoryController::class, 'getAllCategorys']);
 Route::get('/getAllProducts', [productController::class, 'getAllProducts']);
 Route::get('/getAllFavorates', [productController::class, 'getAllFavorates']);
+Route::get('/search_product/{name?}/{category?}', [searchController::class, 'search_product']);
+
 
 Route::delete('/deleteFavorates/{{id}}', [productController::class, 'deleteFavorates']);
