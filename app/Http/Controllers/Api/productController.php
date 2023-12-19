@@ -29,9 +29,8 @@ class productController extends Controller
         // $extension = pathinfo($product['image'], PATHINFO_EXTENSION);
         $image = base64_decode($request->image);
         $extension = ".jpg"; //. $extension;
-        $path1 = "/images/" . $request->marketing_name . $extension;
-        $path = "public" . $path1;
-        file_put_contents(public_path($path1), $image);
+        $path = "/images/" . $request->marketing_name . $extension;
+        file_put_contents(public_path($path), $image);
         $pdata = ['Price' => $proData['Price'], 'category_id' => $proData['category_id'], 'made_by_id' => $proData['made_by_id'], 'image' => $path, 'marketing_name' => $proData['marketing_name'], 'scientific_name' => $proData['scientific_name'], 'arabic_name' => $proData['arabic_name'], 'exp_date' => $proData['exp_date']];
         $pp = product::create($pdata);
         $pwdata = ['products_id' => $pp['id'], 'warehouse_id' => $proData['warehouse_id'], 'Quantity' => $proData['Quantity']];
@@ -57,9 +56,8 @@ class productController extends Controller
         ]);
         $image = base64_decode($request->image);
         $extension = ".jpg"; //. $extension;
-        $path1 = "/images/" . $request->marketing_name . $extension;
-        $path = "public" . $path1;
-        file_put_contents(public_path($path1), $image);
+        $path = "/images/" . $request->marketing_name . $extension;
+        file_put_contents(public_path($path), $image);
         $pp = DB::table('products')->where('id', $request->id)->first();
         product::where('id', $request->id)->update(array('Price' => $request->Price, 'category_id' => $request->category_id, 'made_by_id' => $request->made_by_id, 'image' => $path, 'marketing_name' => $request->marketing_name, 'scientific_name' => $request->scientific_name, 'arabic_name' => $request->arabic_name, 'exp_date' => $request->exp_date));
         $pwdata = products_warehouse::where('products_id', $pp->id)->update(array('Quantity' => $request->Quantity));
@@ -68,20 +66,32 @@ class productController extends Controller
             "message" => "succes"
         ]);
     }
-    public function getAllProducts()
+    public function getAllProducts($id)
     {
-        $proData = DB::table('products')->select('id', 'Price', 'category_id', 'made_by_id', 'image', 'marketing_name', 'scientific_name', 'arabic_name', 'exp_date')->orderBy('id', 'ASC')->get();
+        $proData = DB::table('products')->select('id', 'Price',  'image', 'marketing_name',  'arabic_name')->orderBy('id', 'ASC')->get();
+        foreach ($proData as $pd) {
+            $ch = DB::table('favorates')->where('products_id', $pd->id)->where('phamacist_id', $id)->first();
+            if (isset($ch)) {
+                $pd->favorates = true;
+            } else {
+                $pd->favorates = false;
+            }
+        }
         return response()->json([
             "status" => 1,
             "message" => "succes",
             "data" => $proData
         ]);
     }
-    // TODO:
-    // لا تنسى التعديل حتى يرجعلك اذا كان مفضل او لا
-    public function getProducts()
+    public function getSingleProducts($phamacist_id, $products_id)
     {
-        $proData = DB::table('products')->select('id', 'Price',  'image', 'marketing_name', 'arabic_name')->orderBy('id', 'ASC')->get();
+        $proData = DB::table('products')->select('id', 'Price', 'category_id', 'made_by_id', 'image', 'marketing_name', 'scientific_name', 'arabic_name', 'exp_date')->first();
+        $ch = DB::table('favorates')->where('products_id', $pd->id)->where('phamacist_id', $phamacist_id)->first();
+        if (isset($ch)) {
+            $proData->favorates = true;
+        } else {
+            $proData->favorates = false;
+        }
         return response()->json([
             "status" => 1,
             "message" => "succes",

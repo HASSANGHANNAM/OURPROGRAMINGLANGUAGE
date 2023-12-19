@@ -49,7 +49,8 @@ Route::put('/update_product', [productController::class, 'update_product']);
 
 Route::get('/getAllCitys', [cityController::class, 'getAllCitys']);
 Route::get('/getAllCategorys', [categoryController::class, 'getAllCategorys']);
-Route::get('/getAllProducts', [productController::class, 'getAllProducts']);
+Route::get('/getAllProducts{id}', [productController::class, 'getAllProducts']);
+Route::get('/getSingleProducts/{phamacist_id}/{products_id}', [productController::class, 'getSingleProducts']);
 Route::get('/getAllFavorates', [productController::class, 'getAllFavorates']);
 Route::get('/search_product', [searchController::class, 'search_product']);
 

@@ -50,9 +50,8 @@ class productsSeeder extends Seeder
             // $extension = pathinfo($product['image'], PATHINFO_EXTENSION);
             $image = base64_decode($product['image']);
             $extension = ".jpg"; //. $extension;
-            $path1 = "/images/" . $product['marketing_name'] . $extension;
-            $path = "public" . $path1;
-            file_put_contents(public_path($path1), $image);
+            $path = "/images/" . $product['marketing_name'] . $extension;
+            file_put_contents(public_path($path), $image);
             $creatproduct = [
                 'Price' => $product['Price'],
                 'category_id' => $product['category_id'],
