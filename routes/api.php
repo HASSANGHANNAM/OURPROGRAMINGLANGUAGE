@@ -44,6 +44,7 @@ Route::put('/updateWarehouse', [WarehouseController::class, 'updateWarehouse']);
 Route::put('/update_made_by', [madeByController::class, 'update_made_by']);
 Route::put('/update_category', [categoryController::class, 'update_category']);
 Route::put('/update_city', [cityController::class, 'update_city']);
+Route::put('/update_product', [productController::class, 'update_product']);
 
 
 Route::get('/getAllCitys', [cityController::class, 'getAllCitys']);

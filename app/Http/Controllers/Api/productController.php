@@ -18,7 +18,7 @@ class productController extends Controller
             "Price" => "required|integer",
             "category_id" => "required|integer",
             "made_by_id" => "required|integer",
-            "image" => "required", //|mimes:jpg,png,jped|max:5048
+            "image" => "required",
             "marketing_name" => "required|string|max:45",
             "scientific_name" => "required|string|max:45",
             "arabic_name" => "required|string|max:45",
@@ -33,7 +33,6 @@ class productController extends Controller
         $path = "public" . $path1;
         file_put_contents(public_path($path1), $image);
         $pdata = ['Price' => $proData['Price'], 'category_id' => $proData['category_id'], 'made_by_id' => $proData['made_by_id'], 'image' => $path, 'marketing_name' => $proData['marketing_name'], 'scientific_name' => $proData['scientific_name'], 'arabic_name' => $proData['arabic_name'], 'exp_date' => $proData['exp_date']];
-        //dd("d");
         $pp = product::create($pdata);
         $pwdata = ['products_id' => $pp['id'], 'warehouse_id' => $proData['warehouse_id'], 'Quantity' => $proData['Quantity']];
         $pw = products_warehouse::create($pwdata);
@@ -42,27 +41,28 @@ class productController extends Controller
             "message" => "succes"
         ]);
     }
-    // TODO:  // bug in query db to update
     public function update_product(Request $request)
     {
         $proData = $request->validate([
+            "id" => "required|integer",
             "Price" => "required|integer",
             "category_id" => "required|integer",
             "made_by_id" => "required|integer",
-            "image" => "required|string",
+            "image" => "required",
             "marketing_name" => "required|string|max:45",
             "scientific_name" => "required|string|max:45",
-            "'arabic_name" => "required|string|max:45",
+            "arabic_name" => "required|string|max:45",
             "exp_date" => "required",
             "Quantity" => "required|integer"
         ]);
-        $imgInPublic = base64_decode($proData['image']);
-        dd($imgInPublic);
-        $pdata = ['Price' => $proData['Price'], 'category_id' => $proData['category_id'], 'made_by_id' => $proData['made_by_id'], 'image' => $proData['image'], 'marketing_name' => $proData['marketing_name'], 'scientific_name' => $proData['scientific_name'], 'arabic_name' => $proData['arabic_name'], 'exp_date' => $proData['exp_date']];
-        $pp = product::create($pdata);
-        $pwdata = ['products_id' => $pdata['id'], 'warehouse_id' => 1, 'Quantity' => $proData['Quantity']];
-        $pw = products_warehouse::create($pwdata);
-        //city::where('id', $request->id)->update(array('City_name' => $request->name));
+        $image = base64_decode($request->image);
+        $extension = ".jpg"; //. $extension;
+        $path1 = "/images/" . $request->marketing_name . $extension;
+        $path = "public" . $path1;
+        file_put_contents(public_path($path1), $image);
+        $pp = DB::table('products')->where('id', $request->id)->first();
+        product::where('id', $request->id)->update(array('Price' => $request->Price, 'category_id' => $request->category_id, 'made_by_id' => $request->made_by_id, 'image' => $path, 'marketing_name' => $request->marketing_name, 'scientific_name' => $request->scientific_name, 'arabic_name' => $request->arabic_name, 'exp_date' => $request->exp_date));
+        $pwdata = products_warehouse::where('products_id', $pp->id)->update(array('Quantity' => $request->Quantity));
         return response()->json([
             "status" => 1,
             "message" => "succes"
