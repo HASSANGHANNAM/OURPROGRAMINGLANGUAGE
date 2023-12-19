@@ -51,7 +51,7 @@ Route::get('/getAllCitys', [cityController::class, 'getAllCitys']);
 Route::get('/getAllCategorys', [categoryController::class, 'getAllCategorys']);
 Route::get('/getAllProducts', [productController::class, 'getAllProducts']);
 Route::get('/getAllFavorates', [productController::class, 'getAllFavorates']);
-Route::get('/search_product/{name?}/{category?}', [searchController::class, 'search_product']);
+Route::get('/search_product', [searchController::class, 'search_product']);
 
 
 Route::delete('/deleteFavorates/{{id}}', [productController::class, 'deleteFavorates']);

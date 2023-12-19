@@ -9,48 +9,49 @@ use App\Http\Controllers\Api\productController;
 
 class searchController extends Controller
 {
-    public function search_product($name = null, $category = "all", Request $request)
+    public function search_product()
     {
-        dd("sdf");
-        // $Da = $request->validate([
-        //     "phatmacist_id" => "required|integer"
-        // ]);
-        if (isset($name) && $name != null) {
-            if (isset($category) && $category != "all") {
+        $name = request()->query('name');
+        $category = request()->query('category');
+        if (isset($name)) {
+            if (isset($category)) {
                 $cat_id = DB::table('category')->where('Category_name', $category)->first();
-                $proDataSearch = DB::table('products')->where('marketing_name', $name)->where('category_id', $cat_id->id)->orderBy('id', 'ASC')->get();
-                if (isset($proDataSearch)) {
-                    return response()->json([
-                        "status" => 1,
-                        "message" => "search",
-                        "data" => $proDataSearch
-                    ]);
-                } else {
+                if (isset($cat_id)) {
+                    $proDataSearch = DB::table('products')->where('marketing_name', $name)->where('category_id', $cat_id->id)->orderBy('id', 'ASC')->get();
+                    if (count($proDataSearch) != 0) {
+                        return response()->json([
+                            "status" => 1,
+                            "message" => "search",
+                            "data" => $proDataSearch
+                        ]);
+                    }
                     return response()->json([
                         "status" => 0,
                         "message" => "not founde"
                     ]);
-                    //FF
                 }
+                return response()->json([
+                    "status" => 0,
+                    "message" => "not founde"
+                ]);
             } else {
                 $proDataSearch = DB::table('products')->where('marketing_name', $name)->orderBy('id', 'ASC')->get();
-                if (isset($proDataSearch)) {
+                if (count($proDataSearch) != 0) {
                     return response()->json([
                         "status" => 1,
                         "message" => "search",
                         "data" => $proDataSearch
                     ]);
-                } else {
-                    return response()->json([
-                        "status" => 0,
-                        "message" => "not founde"
-                    ]);
                 }
+                return response()->json([
+                    "status" => 0,
+                    "message" => "not founde"
+                ]);
             }
-        } elseif (isset($category) && $category != "all") {
-            $cat_id = DB::table('category')->where('Catgory_name', $category)->first();
-            $proDataSearch = DB::table('products')->where('catgory_id', $cat_id->id)->orderBy('id', 'ASC')->get();
-            if (isset($proDataSearch)) {
+        } elseif (isset($category)) {
+            $cat_id = DB::table('category')->where('Category_name', $category)->first();
+            $proDataSearch = DB::table('products')->where('category_id', $cat_id->id)->orderBy('id', 'ASC')->get();
+            if (count($proDataSearch) != 0) {
                 return response()->json([
                     "status" => 1,
                     "message" => "search",
@@ -63,12 +64,6 @@ class searchController extends Controller
                 ]);
             }
         }
-        return response()->json([
-            "status" => 1,
-            "message" => "all products ",
-        ]);
+        return app('App\Http\Controllers\Api\productController')->getAllProducts();
     }
 }
-// {$cccc?}
-
-// $proData = DB::table('products')->select('id', 'Price', 'category_id', 'made_by_id', 'image', 'marketing_name', 'scientific_name', 'arabic_name', 'exp_date')->orderBy('id', 'ASC')->get();
