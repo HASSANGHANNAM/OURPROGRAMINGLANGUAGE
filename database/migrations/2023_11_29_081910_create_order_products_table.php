@@ -12,7 +12,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('order_id');
             $table->foreign('order_id')->references('id')->on('order');
-            $table->integer('number_of_produts')->unsigned();
+            $table->integer('Quantity')->unsigned();
             $table->unsignedBigInteger('Product_id');
             $table->foreign('Product_id')->references('id')->on('products');
             $table->timestamps();

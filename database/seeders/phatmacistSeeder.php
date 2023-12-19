@@ -18,6 +18,8 @@ class phatmacistSeeder extends Seeder
             'address' => "8 march",
         ];
         $location = location::create($locationData);
+        $user['Email_address'] = "na@gmail.com";
+        $user['Phone_number'] = "0934583745";
         $user['type'] = 2;
         $user['wallet'] = 10000;
         $user['password'] = Hash::make("123456789");

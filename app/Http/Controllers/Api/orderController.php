@@ -28,7 +28,7 @@ class orderController extends Controller
         $orDa = order::create($ordata);
         $orprodata = [
             'Quantity' => $orData['Quantity'],
-            'product_id' => $orData['product_id'],
+            'Product_id' => $orData['product_id'],
             'order_id' => $orDa['id']
         ];
         $pp = order_product::create($orprodata);

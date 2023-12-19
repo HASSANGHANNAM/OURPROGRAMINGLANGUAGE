@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\madeByController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\MainController;
+use App\Http\Controllers\Api\orderController;
 use App\Http\Controllers\Api\productController;
 use App\Http\Controllers\Api\searchController;
 use App\Http\Controllers\Api\WarehouseController;
@@ -35,6 +36,7 @@ Route::post('/createWarehouse', [WarehouseController::class, 'createWarehouse'])
 Route::post('/create_made_by', [madeByController::class, 'create_made_by']);
 Route::post('/create_category', [categoryController::class, 'create_category']);
 Route::post('/create_city', [cityController::class, 'create_city']);
+Route::post('/create_order', [orderController::class, 'create_order']);
 Route::post('/create_product', [productController::class, 'create_product']);
 Route::post('/putInfavorates', [productController::class, 'putInfavorates']);
 
