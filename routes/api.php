@@ -55,4 +55,4 @@ Route::get('/getAllFavorates', [productController::class, 'getAllFavorates']);
 Route::get('/search_product', [searchController::class, 'search_product']);
 
 
-Route::delete('/deleteFavorates/{{id}}', [productController::class, 'deleteFavorates']);
+Route::delete('/deleteFavorates/{id}', [productController::class, 'deleteFavorates']);

@@ -110,6 +110,7 @@ class productController extends Controller
             "message" => "succes"
         ]);
     }
+    // TODO:
     public function getAllFavorates(Request $request)
     {
         $favData = $request->validate([
@@ -131,7 +132,6 @@ class productController extends Controller
         return response()->json([
             "status" => 1,
             "message" => "succes",
-            "data" => $favPh
         ]);
     }
 }
