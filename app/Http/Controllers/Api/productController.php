@@ -54,6 +54,7 @@ class productController extends Controller
             "exp_date" => "required",
             "Quantity" => "required|integer"
         ]);
+
         $image = base64_decode($request->image);
         $extension = ".jpg"; //. $extension;
         $path = "/images/" . $request->marketing_name . $extension;
