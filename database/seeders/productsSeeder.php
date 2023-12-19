@@ -6,6 +6,7 @@ use App\Models\product;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Storage;
+use App\Models\products_warehouse;
 
 class productsSeeder extends Seeder
 {
@@ -63,6 +64,13 @@ class productsSeeder extends Seeder
                 'exp_date' => $product['exp_date']
             ];
             $p = product::create($creatproduct);
+            $pp = [
+                'products_id' => 1,
+                'warehouse_id' => 1,
+                'Quantity' => 22
+            ];
+
+            products_warehouse::create($pp);
         }
     }
 }

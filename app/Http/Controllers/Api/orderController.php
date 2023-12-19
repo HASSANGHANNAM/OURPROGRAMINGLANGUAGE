@@ -7,6 +7,7 @@ use App\Models\order;
 use App\Models\order_product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Models\products_warehouse;
 
 class orderController extends Controller
 {
@@ -36,7 +37,6 @@ class orderController extends Controller
             "message" => "succes"
         ]);
     }
-    // TODO:
     public function update_order(Request $request)
     {
         $orData = $request->validate([
@@ -51,13 +51,13 @@ class orderController extends Controller
             'status' => "In preparation",
             'payment_status' => "unpaid"
         ];
-        $orDa = order::create($ordata);
+        $orDa = order::where('products_id', $orData['product_id'])->update(array('warehouse_id' => $ordata['warehouse_id'], 'phatmacist_id' => $ordata['phatmacist_id'], 'status' => $ordata['status'], 'payment_status' => $ordata['payment_status']));
         $orprodata = [
             'Quantity' => $orData['Quantity'],
             'product_id' => $orData['product_id'],
             'order_id' => $orDa['id']
         ];
-        $pp = order_product::create($orprodata);
+        $orDa = order_product::where('order_id', $orDa['id'])->update(array('Quantity' => $orprodata['Quantity'], 'product_id' => $orprodata['product_id'], 'order_id' => $orprodata['order_id']));
         return response()->json([
             "status" => 1,
             "message" => "succes"
