@@ -30,6 +30,7 @@ class searchController extends Controller
                         "status" => 0,
                         "message" => "not founde"
                     ]);
+                    //FF
                 }
             } else {
                 $proDataSearch = DB::table('products')->where('marketing_name', $name)->orderBy('id', 'ASC')->get();
