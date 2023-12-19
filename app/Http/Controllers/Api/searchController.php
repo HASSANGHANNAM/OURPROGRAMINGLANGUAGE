@@ -12,9 +12,9 @@ class searchController extends Controller
     public function search_product($name = null, $category = "all", Request $request)
     {
         dd("sdf");
-        $Da = $request->validate([
-            "phatmacist_id" => "required|integer"
-        ]);
+        // $Da = $request->validate([
+        //     "phatmacist_id" => "required|integer"
+        // ]);
         if (isset($name) && $name != null) {
             if (isset($category) && $category != "all") {
                 $cat_id = DB::table('category')->where('Category_name', $category)->first();
