@@ -97,7 +97,7 @@ class productController extends Controller
         $favData = favorates::create($proData);
         return response()->json([
             "status" => 1,
-            "message" => "succes" //, 'access_token' => $accessToken
+            "message" => "succes"
         ]);
     }
     public function getAllFavorates(Request $request)

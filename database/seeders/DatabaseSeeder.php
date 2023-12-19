@@ -3,6 +3,8 @@
 namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+
+use App\Models\phatmacist;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -25,5 +27,6 @@ class DatabaseSeeder extends Seeder
         $this->call(warehouseSeeder::class);
         $this->call(productsSeeder::class);
         $this->call(SuperAdminSeeder::class);
+        $this->call(phatmacistSeeder::class);
     }
 }

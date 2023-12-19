@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\Storage;
 
 class productsSeeder extends Seeder
 {
-    // مو جاهز
     public function run(): void
     {
         $products = [
