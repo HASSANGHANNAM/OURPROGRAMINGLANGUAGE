@@ -66,11 +66,11 @@ class productController extends Controller
             "message" => "succes"
         ]);
     }
-    public function getAllProducts($id)
+    public function getAllProducts($phamacist_id)
     {
         $proData = DB::table('products')->select('id', 'Price',  'image', 'marketing_name',  'arabic_name')->orderBy('id', 'ASC')->get();
         foreach ($proData as $pd) {
-            $ch = DB::table('favorates')->where('products_id', $pd->id)->where('phamacist_id', $id)->first();
+            $ch = DB::table('favorates')->where('products_id', $pd->id)->where('phamacist_id', $phamacist_id)->first();
             if (isset($ch)) {
                 $pd->favorates = true;
             } else {
@@ -83,10 +83,10 @@ class productController extends Controller
             "data" => $proData
         ]);
     }
-    public function getSingleProducts($phamacist_id, $products_id)
+    public function getSingleProduct($phamacist_id, $products_id)
     {
         $proData = DB::table('products')->select('id', 'Price', 'category_id', 'made_by_id', 'image', 'marketing_name', 'scientific_name', 'arabic_name', 'exp_date')->first();
-        $ch = DB::table('favorates')->where('products_id', $pd->id)->where('phamacist_id', $phamacist_id)->first();
+        $ch = DB::table('favorates')->where('products_id', $phamacist_id)->where('phamacist_id', $phamacist_id)->first();
         if (isset($ch)) {
             $proData->favorates = true;
         } else {
