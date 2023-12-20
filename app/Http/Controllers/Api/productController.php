@@ -111,17 +111,21 @@ class productController extends Controller
             "message" => "succes"
         ]);
     }
-    // TODO:
     public function getAllFavorates(Request $request)
     {
         $favData = $request->validate([
             "phamacist_id" => "required|integer",
         ]);
         $favPh = DB::table('favorates')->where('phamacist_id', $favData['phamacist_id'])->get();
+        $i = 0;
+        foreach ($favPh as $f) {
+            $fda[$i] =  DB::table('products')->where('id', $f->products_id)->first();
+            $i++;
+        }
         return response()->json([
             "status" => 1,
             "message" => "succes",
-            "data" => $favPh
+            "data" => $fda
         ]);
     }
     public function deleteFavorates(Request $request, $id)

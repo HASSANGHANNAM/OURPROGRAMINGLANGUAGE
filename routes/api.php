@@ -54,6 +54,7 @@ Route::get('/getAllCategorys', [categoryController::class, 'getAllCategorys']);
 Route::get('/getAllProducts/{phamacist_id}', [productController::class, 'getAllProducts']);
 Route::get('/getSingleProduct/{phamacist_id}/{products_id}', [productController::class, 'getSingleProduct']);
 Route::get('/getAllFavorates', [productController::class, 'getAllFavorates']);
+Route::get('/getAllOrders/{id}', [orderController::class, 'getAllOrders']);
 Route::get('/search_product', [searchController::class, 'search_product']);
 
 

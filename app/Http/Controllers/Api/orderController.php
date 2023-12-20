@@ -63,18 +63,52 @@ class orderController extends Controller
             "message" => "succes"
         ]);
     }
-    // TODO:
     public function getAllOrders($id)
     {
-        $orData = DB::table('order')->where('phatmacist_id', $id)->orderBy('order_id', 'ASC')->get();
+        //dd("sddf");
+        $orData = DB::table('order')->where('phatmacist_id', $id)->orderBy('id', 'ASC')->get();
+        $i = 0;
+        $j = 0;
+        //dd($orData);
         $allorders = [];
         foreach ($orData as $o) {
-            $allorders += DB::table('orderProducts')->where('order_id', $o->id)->get();
+            $allorders[$i] = DB::table('order_products')->where('order_id', $o->id)->first();
+            $i++;
+            $j++;
         }
+        // dd($allorders);
+        $i = 0;
+        foreach ($allorders as $or) {
+            $porder[$i] = DB::table('products')->where('id', $or->Product_id)->first();
+            $i++;
+        }
+        $i = 0;
+        $waorder = [];
+        foreach ($orData as $or) {
+            $waorder[$i] = DB::table('warehouse')->where('id', $or->warehouse_id)->first();
+            $i++;
+        }
+        //dd($waorder);
+        //dd($orData->payment_status);
+        $data = [];
+        for ($k = 0; $k < $j; $k++) {
+            $data[$k]['status'] = $orData[$k]->status;
+            $data[$k]['payment_status'] = $orData[$k]->payment_status;
+            $data[$k]['Warehouse_name'] = $waorder[$k]->Warehouse_name;
+            $data[$k]['Quantity'] = $allorders[$k]->Quantity;
+            $data[$k]['Price'] = $porder[$k]->Price;
+            $data[$k]['image'] = $porder[$k]->image;
+            $data[$k]['marketing_name'] = $porder[$k]->marketing_name;
+            $data[$k]['scientific_name'] = $porder[$k]->scientific_name;
+            $data[$k]['arabic_name'] = $porder[$k]->arabic_name;
+            $data[$k]['exp_date'] = $porder[$k]->exp_date;
+            // dd($data);
+        }
+        //dd($data);
         return response()->json([
             "status" => 1,
             "message" => "succes",
-            "data" => $orData + $allorders
+            "data" => $data
         ]);
     }
     public function update_order_status(Request $request)
