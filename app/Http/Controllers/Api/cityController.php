@@ -17,11 +17,19 @@ class cityController extends Controller
             "City_Arabic_name" => "required|unique:city|max:45|string",
         ]);
         $cityData = city::create($cityData);
+
+        if (isset($cityData)) {
+            return response()->json([
+                "status" => 1,
+                "message" => "succes"
+            ]);
+        }
         return response()->json([
-            "status" => 1,
-            "message" => "succes"
+            "status" => 0,
+            "message" => "not succes"
         ]);
     }
+    // TODO: requerd in validate
     public function update_city(Request $request)
     {
         $request->validate([
@@ -29,10 +37,16 @@ class cityController extends Controller
             "City_Arabic_name" => "required|unique:city|max:45|string",
             "id" => "required"
         ]);
-        city::where('id', $request->id)->update(array('City_name' => $request->City_name, 'City_Arabic_name' => $request->City_Arabic_name));
+        $s = city::where('id', $request->id)->update(array('City_name' => $request->City_name, 'City_Arabic_name' => $request->City_Arabic_name));
+        if ($s != 0) {
+            return response()->json([
+                "status" => 1,
+                "message" => "succes"
+            ]);
+        }
         return response()->json([
-            "status" => 1,
-            "message" => "succes"
+            "status" => 0,
+            "message" => "not succes"
         ]);
     }
     public function getAllCitys()

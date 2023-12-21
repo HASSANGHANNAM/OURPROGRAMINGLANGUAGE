@@ -16,23 +16,35 @@ class madeByController extends Controller
             "made_by_Arabic_name" => "required|unique:made_by|max:45|string",
         ]);
         $made_byData = made_by::create($made_byData);
+        if (isset($made_byData)) {
+            return response()->json([
+                "status" => 1,
+                "message" => "succes"
+            ]);
+        }
         return response()->json([
-            "status" => 1,
-            "message" => "succes"
+            "status" => 0,
+            "message" => "not succes"
         ]);
     }
+    //TODO: requerd
     public function update_made_by(Request $request)
     {
         $request->validate([
             "made_by_name" => "required|unique:made_by|max:45|string",
             "made_by_Arabic_name" => "required|unique:made_by|max:45|string",
-
             "id" => "required"
         ]);
-        made_by::where('id', $request->id)->update(array('made_by_name' => $request->made_by_name, 'made_by_Arabic_name' => $request->made_by_Arabic_name));
+        $made_byData = made_by::where('id', $request->id)->update(array('made_by_name' => $request->made_by_name, 'made_by_Arabic_name' => $request->made_by_Arabic_name));
+        if ($made_byData != 0) {
+            return response()->json([
+                "status" => 1,
+                "message" => "succes"
+            ]);
+        }
         return response()->json([
-            "status" => 1,
-            "message" => "succes"
+            "status" => 0,
+            "message" => "not succes"
         ]);
     }
     public function getAllMadeby()

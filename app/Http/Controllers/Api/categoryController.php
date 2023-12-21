@@ -15,12 +15,19 @@ class categoryController extends Controller
             "Category_name" => "required|unique:category|max:45|string",
             "Arabic_Category_name" => "required|unique:category|max:45|string",
         ]);
-        $categoryData = category::create($categoryData);
+        $c = $categoryData = category::create($categoryData);
+        if (isset($c)) {
+            return response()->json([
+                "status" => 1,
+                "message" => "succes"
+            ]);
+        }
         return response()->json([
-            "status" => 1,
-            "message" => "succes"
+            "status" => 0,
+            "message" => "not succes"
         ]);
     }
+    // TODO: requerd in validate
     public function update_category(Request $request)
     {
         $request->validate([
@@ -28,10 +35,16 @@ class categoryController extends Controller
             "Arabic_Category_name" => "required|unique:category|max:45|string",
             "id" => "required"
         ]);
-        category::where('id', $request->id)->update(array('Category_name' => $request->Category_name, 'Arabic_Category_name' => $request->Arabic_Category_name));
+        $c = category::where('id', $request->id)->update(array('Category_name' => $request->Category_name, 'Arabic_Category_name' => $request->Arabic_Category_name));
+        if ($c != 0) {
+            return response()->json([
+                "status" => 1,
+                "message" => "succes"
+            ]);
+        }
         return response()->json([
-            "status" => 1,
-            "message" => "succes"
+            "status" => 0,
+            "message" => "not succes"
         ]);
     }
     public function getAllCategorys()

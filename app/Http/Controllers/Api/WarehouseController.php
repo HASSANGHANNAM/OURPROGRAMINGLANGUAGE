@@ -60,8 +60,7 @@ class WarehouseController extends Controller
             "location" => "required|max:45|string"
         ]);
         warehouse::where('id', $request->id)->update(array('Warehouse_name' => $request->Warehouse_name));
-        location::where('id', $request->id)->update(array('city_id' => $request->city_id));
-        location::where('id', $request->id)->update(array('address' => $request->location));
+        location::where('id', $request->id)->update(array('city_id' => $request->city_id, 'address' => $request->location));
         return response()->json([
             "status" => 1,
             "message" => "succes"

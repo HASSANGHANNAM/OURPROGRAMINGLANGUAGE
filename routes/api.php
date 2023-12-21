@@ -50,6 +50,7 @@ Route::put('/update_product', [productController::class, 'update_product']);
 
 
 Route::get('/getAllCitys', [cityController::class, 'getAllCitys']);
+Route::get('/getAllMadeby', [madeByController::class, 'getAllMadeby']);
 Route::get('/getAllCategorys', [categoryController::class, 'getAllCategorys']);
 Route::get('/getAllProducts/{phamacist_id}', [productController::class, 'getAllProducts']);
 Route::get('/getSingleProduct/{phamacist_id}/{products_id}', [productController::class, 'getSingleProduct']);
