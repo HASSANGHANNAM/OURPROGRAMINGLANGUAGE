@@ -8,33 +8,52 @@ use Illuminate\Support\Facades\DB;
 use App\Models\product;
 use App\Models\products_warehouse;
 use App\Models\favorates;
+use App\Models\warehouse;
 
 class productController extends Controller
 {
-    public function create_product(Request $request)
+    public function create_product(Request $request, $warehouse_id)
     {
-        $proData = $request->validate([
-            "warehouse_id" => "required|integer",
-            "Price" => "required|integer",
-            "category_id" => "required|integer",
-            "made_by_id" => "required|integer",
-            "image" => "required",
-            "marketing_name" => "required|string|max:45",
-            "scientific_name" => "required|string|max:45",
-            "arabic_name" => "required|string|max:45",
-            "exp_date" => "required", //date
-            "Quantity" => "required|integer"
-        ]);
-
-        // $extension = pathinfo($product['image'], PATHINFO_EXTENSION);
-        $image = base64_decode($request->image);
-        $extension = ".jpg"; //. $extension;
-        $path = "/images/" . $request->marketing_name . $extension;
-        file_put_contents(public_path($path), $image);
-        $pdata = ['Price' => $proData['Price'], 'category_id' => $proData['category_id'], 'made_by_id' => $proData['made_by_id'], 'image' => $path, 'marketing_name' => $proData['marketing_name'], 'scientific_name' => $proData['scientific_name'], 'arabic_name' => $proData['arabic_name'], 'exp_date' => $proData['exp_date']];
-        $pp = product::create($pdata);
-        $pwdata = ['products_id' => $pp['id'], 'warehouse_id' => $proData['warehouse_id'], 'Quantity' => $proData['Quantity']];
-        $pw = products_warehouse::create($pwdata);
+        $findd = warehouse::find($warehouse_id);
+        if ($findd == null) {
+            return response()->json([
+                "status" => 0,
+                "message" => "warehouse not found"
+            ]);
+        }
+        foreach ($request->p as $product) {
+            // $product = $request->validate([
+            //     "Price" => "required|integer",
+            //     "category_id" => "required|integer",
+            //     "made_by_id" => "required|integer",
+            //     "image" => "required",
+            //     "marketing_name" => "required|string|max:45",
+            //     "scientific_name" => "required|string|max:45",
+            //     "arabic_name" => "required|string|max:45",
+            //     "exp_date" => "required", //date
+            //     "Quantity" => "required|integer"
+            // ]);
+            $check = DB::table('products')->where('marketing_name', $product['marketing_name'])->first();
+            if ($check == null) {
+                // $extension = pathinfo($product['image'], PATHINFO_EXTENSION);
+                $image = base64_decode($request->image);
+                $extension = ".jpg"; //. $extension;
+                $path = "/images/" . $request->marketing_name . $extension;
+                file_put_contents(public_path($path), $image);
+                $pdata = ['Price' => $product['Price'], 'category_id' => $product['category_id'], 'made_by_id' => $product['made_by_id'], 'image' => $path, 'marketing_name' => $product['marketing_name'], 'scientific_name' => $product['scientific_name'], 'arabic_name' => $product['arabic_name'], 'exp_date' => $product['exp_date']];
+                $pp = product::create($pdata);
+                $pwdata = ['products_id' => $pp['id'], 'warehouse_id' => $warehouse_id, 'Quantity' => $product['Quantity']];
+                $pw = products_warehouse::create($pwdata);
+            } else {
+                $check2 = DB::table('products_warehouse')->where("warehouse_id", $warehouse_id)->where("products_id", $check->id)->first();
+                if ($check2 == null) {
+                    $pwdata = ['products_id' => $check->id, 'warehouse_id' => $warehouse_id, 'Quantity' => $product['Quantity']];
+                    $pw = products_warehouse::create($pwdata);
+                } else {
+                    $check3 = products_warehouse::where('id', $check2->id)->update(array('Quantity' => $product['Quantity'] + $check2->Quantity));
+                }
+            }
+        }
         return response()->json([
             "status" => 1,
             "message" => "succes"
@@ -54,7 +73,6 @@ class productController extends Controller
             "exp_date" => "required",
             "Quantity" => "required|integer"
         ]);
-
         $image = base64_decode($request->image);
         $extension = ".jpg"; //. $extension;
         $path = "/images/" . $request->marketing_name . $extension;
@@ -93,6 +111,12 @@ class productController extends Controller
         } else {
             $proData->favorates = false;
         }
+        $madeData = DB::table('made_by')->where('id', $proData->id)->select('made_by_name', 'made_by_Arabic_name')->first();
+        $cityData = DB::table('city')->where('id', $proData->id)->select('City_name', 'City_Arabic_name')->first();
+        $proData->made_by_name = $madeData->made_by_name;
+        $proData->made_by_Arabic_name = $madeData->made_by_Arabic_name;
+        $proData->City_name = $cityData->City_name;
+        $proData->City_Arabic_name = $cityData->City_Arabic_name;
         return response()->json([
             "status" => 1,
             "message" => "succes",

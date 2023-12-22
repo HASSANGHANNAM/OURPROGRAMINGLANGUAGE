@@ -29,6 +29,12 @@ class WarehouseController extends Controller
             "location" => "required|max:45|string"
         ]);
         $ow = DB::table('owner')->where('id', $request->owner_id)->first();
+        if ($ow == null) {
+            return response()->json([
+                "status" => 1,
+                "message" => "owner not found"
+            ]);
+        }
         if ($ow->status == "acceptable") {
             $locationData = [
                 'city_id' => $request->city_id,

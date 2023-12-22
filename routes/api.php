@@ -36,8 +36,8 @@ Route::post('/createWarehouse', [WarehouseController::class, 'createWarehouse'])
 Route::post('/create_made_by', [madeByController::class, 'create_made_by']);
 Route::post('/create_category', [categoryController::class, 'create_category']);
 Route::post('/create_city', [cityController::class, 'create_city']);
-Route::post('/create_order', [orderController::class, 'create_order']);
-Route::post('/create_product', [productController::class, 'create_product']);
+Route::post('/create_order/{warehouse_id}/{phatmacist_id}', [orderController::class, 'create_order']);
+Route::post('/create_product/{warehouse_id}', [productController::class, 'create_product']);
 Route::post('/putInfavorates', [productController::class, 'putInfavorates']);
 
 

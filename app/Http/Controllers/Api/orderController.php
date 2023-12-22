@@ -5,49 +5,84 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\order;
 use App\Models\order_product;
+use App\Models\phatmacist;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\products_warehouse;
+use App\Models\warehouse;
 
 class orderController extends Controller
 {
-    public function create_order(Request $request)
+    public function create_order(Request $request, $warehouse_id, $phatmacist_id)
     {
-        $orData = $request->validate([
-            "warehouse_id" => "required|integer",
-            "phatmacist_id" => "required|integer",
-            "Quantity" => "required|integer",
-            "product_id" => "required|integer",
-        ]);
+        $findd = warehouse::find($warehouse_id);
+        $findd2 = phatmacist::find($phatmacist_id);
+        if ($findd == null && $findd2 == null) {
+            return response()->json([
+                "status" => 0,
+                "message" => "warehouse and pharmacy not found"
+            ]);
+        }
+        if ($findd == null) {
+            return response()->json([
+                "status" => 0,
+                "message" => "warehouse not found"
+            ]);
+        }
+        if ($findd2 == null) {
+            return response()->json([
+                "status" => 0,
+                "message" => "pharmacy not found"
+            ]);
+        }
         $ordata = [
-            'warehouse_id' => $orData['warehouse_id'],
-            'phatmacist_id' => $orData['phatmacist_id'],
+            'warehouse_id' => $warehouse_id,
+            'phatmacist_id' => $phatmacist_id,
             'status' => "In preparation",
             'payment_status' => "unpaid"
         ];
         $orDa = order::create($ordata);
-        $orprodata = [
-            'Quantity' => $orData['Quantity'],
-            'Product_id' => $orData['product_id'],
-            'order_id' => $orDa['id']
-        ];
-        $pp = order_product::create($orprodata);
+        foreach ($request->p as $product) {
+            // $product = $request->validate([
+            //     "Quantity" => "required|integer",
+            //     "product_id" => "required|integer",
+            // ]);
+
+            $check = DB::table('products')->where('id', $product['product_id'])->first();
+            if ($check != null) {
+                $check2 = DB::table('order_products')->where("Product_id", $product['product_id'])->where("order_id", $orDa['id'])->first();
+                if ($check2 == null) {
+                    $orprodata = [
+                        'Quantity' => $product['Quantity'],
+                        'Product_id' => $product['product_id'],
+                        'order_id' => $orDa['id']
+                    ];
+                    $pp = order_product::create($orprodata);
+                } else {
+                    order_product::where('id', $check2->id)->update(array('Quantity' => $product['Quantity'] + $check2->Quantity));
+                }
+            } else {
+                return response()->json([
+                    "status" => 0,
+                    "message" => "product not found"
+                ]);
+            }
+        }
         return response()->json([
             "status" => 1,
             "message" => "succes"
         ]);
     }
-    public function update_order(Request $request)
+    // TODO:    if status + delet old and create new
+    public function update_order(Request $request, $warehouse_id, $phatmacist_id)
     {
         $orData = $request->validate([
-            "warehouse_id" => "required|integer",
-            "phatmacist_id" => "required|integer",
             "Quantity" => "required|integer",
             "product_id" => "required|integer",
         ]);
         $ordata = [
-            'warehouse_id' => $orData['warehouse_id'],
-            'phatmacist_id' => $orData['phatmacist_id'],
+            'warehouse_id' => $warehouse_id,
+            'phatmacist_id' => $phatmacist_id,
             'status' => "In preparation",
             'payment_status' => "unpaid"
         ];
