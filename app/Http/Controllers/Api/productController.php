@@ -111,12 +111,12 @@ class productController extends Controller
         } else {
             $proData->favorates = false;
         }
-        $madeData = DB::table('made_by')->where('id', $proData->id)->select('made_by_name', 'made_by_Arabic_name')->first();
-        $cityData = DB::table('city')->where('id', $proData->id)->select('City_name', 'City_Arabic_name')->first();
+        $madeData = DB::table('made_by')->where('id', $proData->made_by_id)->select('made_by_name', 'made_by_Arabic_name')->first();
+        $cateData = DB::table('category')->where('id', $proData->category_id)->select('Category_name', 'Arabic_Category_name')->first();
         $proData->made_by_name = $madeData->made_by_name;
         $proData->made_by_Arabic_name = $madeData->made_by_Arabic_name;
-        $proData->City_name = $cityData->City_name;
-        $proData->City_Arabic_name = $cityData->City_Arabic_name;
+        $proData->Category_name = $cateData->Category_name;
+        $proData->Arabic_Category_name = $cateData->Arabic_Category_name;
         return response()->json([
             "status" => 1,
             "message" => "succes",

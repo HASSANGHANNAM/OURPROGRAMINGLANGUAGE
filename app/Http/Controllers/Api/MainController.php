@@ -132,8 +132,10 @@ class MainController extends Controller
                 "Full_name" => $phar_data->Full_name,
                 "Email_address" => $user_data->Email_address,
                 "Phone_number" => $user_data->Phone_number,
+                "password" => $user_data->password,
                 "Pharmacy_name" => $phar_data->Pharmacy_name,
-                "City" => $city_data->City_name,
+                "City_name" => $city_data->City_name,
+                "City_Arabic_name" => $city_data->City_Arabic_name,
                 "Pharmacy_address" => $location_data->address,
                 "wallet" => $user_data->wallet,
                 "type" => $user_data->type,
@@ -146,7 +148,7 @@ class MainController extends Controller
                 "message" => "info",
                 "data" => $profile_data
             ]);
-        } else if ($user_data['type'] == 2) {
+        } else if ($user_data['type'] == 1) {
             $owner_data = DB::table('owner')->where('user_id', $user_data->id)->first();
             if ($owner_data['status'] == "acceptable") {
                 $warehouse_data = DB::table('warehouse')->where('owner_id', $user_data->id)->first();
@@ -156,8 +158,10 @@ class MainController extends Controller
                     "id" => $user_data->id,
                     "Email_address" => $user_data->Email_address,
                     "Phone_number" => $user_data->Phone_number,
+                    "password" => $user_data->password,
                     "Warehouse_name" => $warehouse_data->Warehouse_name,
                     "City" => $city_data->City_name,
+                    "City_Arabic_name" => $city_data->City_Arabic_name,
                     "warehouse_address" => $location_data->address,
                     "wallet" => $user_data->wallet,
                     "type" => $user_data->type,
@@ -175,6 +179,7 @@ class MainController extends Controller
                     "id" => $user_data->id,
                     "Email_address" => $user_data->Email_address,
                     "Phone_number" => $user_data->Phone_number,
+                    "password" => $user_data->password,
                     "wallet" => $user_data->wallet,
                     "type" => $user_data->type,
                     "statusOfowner" => $owner_data->status,
@@ -193,6 +198,7 @@ class MainController extends Controller
             "id" => $user_data->id,
             "Email_address" => $user_data->Email_address,
             "Phone_number" => $user_data->Phone_number,
+            "password" => $user_data->password,
             "wallet" => $user_data->wallet,
             "type" => $user_data->type,
             "remember_token" => $user_data->remember_token,
@@ -204,6 +210,39 @@ class MainController extends Controller
             "message" => "info",
             "data" => $profile_data
         ]);
+    }
+    //TODO: warehouse + uniqe 
+    public function update_profile(Request $request)
+    {
+        $user_data = auth()->user();
+        dd($user_data);
+        if ($user_data['type'] == 2) {
+            $user = $request->validate([
+                "Full_name" => "required|max:45",
+                "Email_address" => "max:255|required|email|regex:/(.+)@gmail.com/", //|unique:users
+                "Phone_number" => "required|regex:/^([0-9\+]*)$/|min:10|max:10|regex:/09(.+)/", //|unique:users
+                "Password" => ['required', 'string', password::min(8)],
+                "Pharmacy_name" => "required|max:45|string", //|unique:phatmacist
+                "City" => "required|integer",
+                "Pharmacy_address" => "required|max:45|string"
+            ]);
+            $lo = DB::table('phatmacist')->where('user_id',  $user_data->id)->first();
+            // dd($lo);
+            location::where('id', $lo->location_id)->update(array('address' => $request->Pharmacy_address, 'city_id' => $request->City));
+            $location = DB::table('location')->where('address', $request->Pharmacy_address)->first();
+            //dd($location);
+            $user = User::where('id', $user_data->id)->update(array(
+                'Phone_number' => $request->Phone_number, 'Email_address' => $request->Email_address, 'password' => Hash::make($request->Password)
+            ));
+            $phatmacist = phatmacist::where('user_id', $user_data->id)->update(array(
+                'Full_name' => $request->Full_name, 'location_id' => $location->id, 'Pharmacy_name' => $request->Pharmacy_name
+            ));
+            return response()->json([
+                "status" => 1,
+                "message" => "succes"
+            ]);
+        } else if ($user_data['type'] == 1) {
+        }
     }
     public function logout()
     {

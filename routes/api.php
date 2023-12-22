@@ -29,6 +29,7 @@ Route::post('/register/pharmace', [MainController::class, 'regesterpharmace']);
 Route::group(["middleware" => ["auth:sanctum"]], function () {
     Route::get('/logout', [MainController::class, 'logout']);
     Route::get('/profile', [MainController::class, 'profile']);
+    Route::post('/update_profile', [MainController::class, 'update_profile']);
 });
 
 
