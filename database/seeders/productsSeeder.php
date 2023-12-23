@@ -65,7 +65,7 @@ class productsSeeder extends Seeder
             ];
             $p = product::create($creatproduct);
             $pp = [
-                'products_id' => 1,
+                'products_id' => $p->id,
                 'warehouse_id' => 1,
                 'Quantity' => 22
             ];

@@ -87,13 +87,26 @@ class productController extends Controller
     }
     public function getAllProducts($phamacist_id)
     {
-        $proData = DB::table('products')->select('id', 'Price',  'image', 'marketing_name',  'arabic_name')->orderBy('id', 'ASC')->get();
+        $proData = DB::table('products')->select('id', 'Price', 'category_id', 'made_by_id', 'image', 'marketing_name', 'scientific_name', 'arabic_name', 'exp_date')->get();
+        $warehouse_id = 1;
         foreach ($proData as $pd) {
+            $madeData = DB::table('made_by')->where('id', $pd->made_by_id)->select('made_by_name', 'made_by_Arabic_name')->first();
+            $cateData = DB::table('category')->where('id', $pd->category_id)->select('Category_name', 'Arabic_Category_name')->first();
+            $pd->made_by_name = $madeData->made_by_name;
+            $pd->made_by_Arabic_name = $madeData->made_by_Arabic_name;
+            $pd->Category_name = $cateData->Category_name;
+            $pd->Arabic_Category_name = $cateData->Arabic_Category_name;
             $ch = DB::table('favorates')->where('products_id', $pd->id)->where('phamacist_id', $phamacist_id)->first();
+            $ch2 = DB::table('products_warehouse')->where('products_id', $pd->id)->where('warehouse_id', $warehouse_id)->first();
             if (isset($ch)) {
                 $pd->favorates = true;
             } else {
                 $pd->favorates = false;
+            }
+            if (isset($ch2)) {
+                $pd->Quantity = $ch2->Quantity;
+            } else {
+                $pd->Quantity = 0;
             }
         }
         return response()->json([
