@@ -102,6 +102,24 @@ class productController extends Controller
             "data" => $proData
         ]);
     }
+    public function getAllProductsToWarehouse($warehouse_id)
+    {
+        $proData = DB::table('products')->select('id', 'Price', 'category_id', 'made_by_id', 'image', 'marketing_name', 'scientific_name', 'arabic_name', 'exp_date')->get();
+        foreach ($proData as $pd) {
+            // dd("asd");
+            $madeData = DB::table('made_by')->where('id', $pd->made_by_id)->select('made_by_name', 'made_by_Arabic_name')->first();
+            $cateData = DB::table('category')->where('id', $pd->category_id)->select('Category_name', 'Arabic_Category_name')->first();
+            $pd->made_by_name = $madeData->made_by_name;
+            $pd->made_by_Arabic_name = $madeData->made_by_Arabic_name;
+            $pd->Category_name = $cateData->Category_name;
+            $pd->Arabic_Category_name = $cateData->Arabic_Category_name;
+        }
+        return response()->json([
+            "status" => 1,
+            "message" => "succes",
+            "data" => $proData
+        ]);
+    }
     public function getSingleProduct($phamacist_id, $products_id)
     {
         $proData = DB::table('products')->select('id', 'Price', 'category_id', 'made_by_id', 'image', 'marketing_name', 'scientific_name', 'arabic_name', 'exp_date')->first();

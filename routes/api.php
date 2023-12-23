@@ -54,6 +54,7 @@ Route::get('/getAllCitys', [cityController::class, 'getAllCitys']);
 Route::get('/getAllMadeby', [madeByController::class, 'getAllMadeby']);
 Route::get('/getAllCategorys', [categoryController::class, 'getAllCategorys']);
 Route::get('/getAllProducts/{phamacist_id}', [productController::class, 'getAllProducts']);
+Route::get('/getAllProductsToWarehouse/{warehouse_id}', [productController::class, 'getAllProductsToWarehouse']);
 Route::get('/getSingleProduct/{phamacist_id}/{products_id}', [productController::class, 'getSingleProduct']);
 Route::get('/getAllFavorates', [productController::class, 'getAllFavorates']);
 Route::get('/getAllOrders/{id}', [orderController::class, 'getAllOrders']);
