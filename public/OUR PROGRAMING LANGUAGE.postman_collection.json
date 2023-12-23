@@ -683,6 +683,37 @@
 							"response": []
 						},
 						{
+							"name": "getAllProductsToWarehouse",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/api/getAllProductsToWarehouse/1",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"api",
+										"getAllProductsToWarehouse",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
 							"name": "getSingleProduct",
 							"protocolProfileBehavior": {
 								"disableBodyPruning": true
