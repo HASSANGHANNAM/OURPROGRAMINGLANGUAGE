@@ -9,11 +9,40 @@ use App\Models\product;
 use App\Models\products_warehouse;
 use App\Models\favorates;
 use App\Models\warehouse;
+// class ProductController extends Controller
+// {
+//     public function store(Request $request)
+//     {
+//         $data = $request->json()->all();
 
+//         foreach ($data as $item) {
+//             // Validate input data if needed
+//             $validatedData = $this->validate($item, [
+//                 'Price' => 'required|numeric',
+//                 'category_id' => 'required|exists:categories,id',
+//                 'made_by_id' => 'required|exists:manufacturers,id',
+//                 'image' => 'required|string',
+//                 'marketing_name' => 'required|string',
+//                 'scientific_name' => 'required|string',
+//                 'arabic_name' => 'required|string',
+//                 'exp_date' => 'required|date',
+//                 'Quantity' => 'required|integer',
+//             ]);
+
+//             // Create and save the product
+//             Product::create($validatedData);
+//         }
+
+//         return response()->json(['message' => 'Products stored successfully'], 201);
+//     }
+// }
 class productController extends Controller
 {
     public function create_product(Request $request, $warehouse_id)
     {
+        $datarequest = $request->json()->all();
+        //dd($data);
+
         $findd = warehouse::find($warehouse_id);
         if ($findd == null) {
             return response()->json([
@@ -21,24 +50,25 @@ class productController extends Controller
                 "message" => "warehouse not found"
             ]);
         }
-        foreach ($request->p as $product) {
-            // $product = $request->validate([
-            //     "Price" => "required|integer",
-            //     "category_id" => "required|integer",
-            //     "made_by_id" => "required|integer",
-            //     "image" => "required",
-            //     "marketing_name" => "required|string|max:45",
-            //     "scientific_name" => "required|string|max:45",
-            //     "arabic_name" => "required|string|max:45",
-            //     "exp_date" => "required", //date
-            //     "Quantity" => "required|integer"
+        foreach ($datarequest as $product) {
+            // $validatedData = $this->validate($product, [
+            //     'Price' => 'required|integer',
+            // "category_id" => "required|integer",
+            // "made_by_id" => "required|integer",
+            // "image" => "required",
+            // "marketing_name" => "required|string|max:45",
+            // "scientific_name" => "required|string|max:45",
+            // "arabic_name" => "required|string|max:45",
+            // "exp_date" => "required", //date
+            // "Quantity" => "required|integer"
             // ]);
+            //dd("dd");
             $check = DB::table('products')->where('marketing_name', $product['marketing_name'])->first();
             if ($check == null) {
                 // $extension = pathinfo($product['image'], PATHINFO_EXTENSION);
-                $image = base64_decode($request->image);
+                $image = base64_decode($product['image']);
                 $extension = ".jpg"; //. $extension;
-                $path = "/images/" . $request->marketing_name . $extension;
+                $path = "/images/" . $product['marketing_name'] . $extension;
                 file_put_contents(public_path($path), $image);
                 $pdata = ['Price' => $product['Price'], 'category_id' => $product['category_id'], 'made_by_id' => $product['made_by_id'], 'image' => $path, 'marketing_name' => $product['marketing_name'], 'scientific_name' => $product['scientific_name'], 'arabic_name' => $product['arabic_name'], 'exp_date' => $product['exp_date']];
                 $pp = product::create($pdata);

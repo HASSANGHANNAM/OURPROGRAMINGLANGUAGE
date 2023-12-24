@@ -354,3 +354,14 @@ class MainController extends Controller
         // 'password' => ['required','string',Password::min(8),'confirmed']
         // |min:3|max:45
         // |digits_between:1,7
+
+        // if(\File::exists(public_path('upload/bio.png'))){
+        //     \File::delete(public_path('upload/bio.png'));
+        //     }
+
+
+            // if (file_exists($image_path)) {
+
+            //     @unlink($image_path);
+         
+            // }

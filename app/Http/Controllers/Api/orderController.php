@@ -42,12 +42,13 @@ class orderController extends Controller
             'payment_status' => "unpaid"
         ];
         $orDa = order::create($ordata);
-        foreach ($request->p as $product) {
-            // $product = $request->validate([
-            //     "Quantity" => "required|integer",
+        $datarequest = $request->json()->all();
+        // dd($datarequest);
+        foreach ($datarequest as $product) {
+            // $validatedData = $this->validate($product, [
+            // "Quantity" => "required|integer",
             //     "product_id" => "required|integer",
             // ]);
-
             $check = DB::table('products')->where('id', $product['product_id'])->first();
             if ($check != null) {
                 $check2 = DB::table('order_products')->where("Product_id", $product['product_id'])->where("order_id", $orDa['id'])->first();
@@ -100,46 +101,29 @@ class orderController extends Controller
     }
     public function getAllOrders($id)
     {
-        //dd("sddf");
         $orData = DB::table('order')->where('phatmacist_id', $id)->orderBy('id', 'ASC')->get();
         $i = 0;
         $j = 0;
-        //dd($orData);
-        $allorders = [];
-        foreach ($orData as $o) {
-            $allorders[$i] = DB::table('order_products')->where('order_id', $o->id)->first();
-            $i++;
-            $j++;
-        }
-        // dd($allorders);
-        $i = 0;
-        foreach ($allorders as $or) {
-            $porder[$i] = DB::table('products')->where('id', $or->Product_id)->first();
-            $i++;
-        }
-        $i = 0;
-        $waorder = [];
-        foreach ($orData as $or) {
-            $waorder[$i] = DB::table('warehouse')->where('id', $or->warehouse_id)->first();
-            $i++;
-        }
-        //dd($waorder);
-        //dd($orData->payment_status);
         $data = [];
-        for ($k = 0; $k < $j; $k++) {
-            $data[$k]['status'] = $orData[$k]->status;
-            $data[$k]['payment_status'] = $orData[$k]->payment_status;
-            $data[$k]['Warehouse_name'] = $waorder[$k]->Warehouse_name;
-            $data[$k]['Quantity'] = $allorders[$k]->Quantity;
-            $data[$k]['Price'] = $porder[$k]->Price;
-            $data[$k]['image'] = $porder[$k]->image;
-            $data[$k]['marketing_name'] = $porder[$k]->marketing_name;
-            $data[$k]['scientific_name'] = $porder[$k]->scientific_name;
-            $data[$k]['arabic_name'] = $porder[$k]->arabic_name;
-            $data[$k]['exp_date'] = $porder[$k]->exp_date;
-            // dd($data);
+        foreach ($orData as $o) {
+            $waorder = DB::table('warehouse')->where('id', $o->warehouse_id)->first();
+            $data[$i]['status'] = $o->status;
+            $data[$i]['payment_status'] = $o->payment_status;
+            $data[$i]['Warehouse_name'] = $waorder->Warehouse_name;
+            $allorders = DB::table('order_products')->where('order_id', $o->id)->get();
+            foreach ($allorders as $or) {
+                $data[$i]['products'][$j] = DB::table('products')->where('id', $or->Product_id)->first();
+                $cateData = DB::table('category')->where('id',  $data[$i]['products'][$j]->id)->select('Category_name', 'Arabic_Category_name')->first();
+                $madeData = DB::table('made_by')->where('id',  $data[$i]['products'][$j]->id)->select('made_by_name', 'made_by_Arabic_name')->first();
+                $data[$i]['products'][$j]->made_by_name = $madeData->made_by_name;
+                $data[$i]['products'][$j]->made_by_Arabic_name = $madeData->made_by_Arabic_name;
+                $data[$i]['products'][$j]->Category_name = $cateData->Category_name;
+                $data[$i]['products'][$j]->Arabic_Category_name =  $cateData->Arabic_Category_name;
+                $j++;
+            }
+            $i++;
+            $j = 0;
         }
-        //dd($data);
         return response()->json([
             "status" => 1,
             "message" => "succes",
@@ -153,9 +137,7 @@ class orderController extends Controller
             "order_status" => "required|string",
         ]);
         order::where('id', $request->order_id)->update(array('status' => $request->order_status));
-        if($request->order_status=="Delivered")
-        {
-            
+        if ($request->order_status == "Delivered") {
         }
         return response()->json([
             "status" => 1,
