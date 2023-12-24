@@ -31,7 +31,7 @@ class WarehouseController extends Controller
         $ow = DB::table('owner')->where('id', $request->owner_id)->first();
         if ($ow == null) {
             return response()->json([
-                "status" => 1,
+                "status" => 0,
                 "message" => "owner not found"
             ]);
         }
@@ -60,11 +60,27 @@ class WarehouseController extends Controller
     public function updateWarehouse(Request $request)
     {
         $request->validate([
-            "Warehouse_name" => "required|unique:warehouse|max:45|string",
             "id" => "required",
             "city_id" => "required|integer",
             "location" => "required|max:45|string"
         ]);
+        $c = DB::table('warehouse')->where('id', $request->id)->select('id', 'Warehouse_name', 'location_id')->first();
+        if ($c == null) {
+            return response()->json([
+                "status" => 0,
+                "message" => "warehouse not found "
+            ]);
+        }
+        $c2 = DB::table('location')->where('id', $c->id)->select('id', 'address', 'city_id')->first();
+        if ($c->Warehouse_name == $request->Warehouse_name) {
+            $request->validate([
+                "Warehouse_name" => "required|max:45|string",
+            ]);
+        } else {
+            $request->validate([
+                "Warehouse_name" => "required|unique:warehouse|max:45|string",
+            ]);
+        }
         warehouse::where('id', $request->id)->update(array('Warehouse_name' => $request->Warehouse_name));
         location::where('id', $request->id)->update(array('city_id' => $request->city_id, 'address' => $request->location));
         return response()->json([

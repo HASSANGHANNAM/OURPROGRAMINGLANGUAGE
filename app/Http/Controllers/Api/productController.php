@@ -59,6 +59,7 @@ class productController extends Controller
             "message" => "succes"
         ]);
     }
+    //TODO:
     public function update_product(Request $request)
     {
         $proData = $request->validate([
@@ -86,6 +87,38 @@ class productController extends Controller
         ]);
     }
     public function getAllProducts($phamacist_id)
+    {
+        $warehouse_id = 1;
+        $proData = DB::table('products_warehouse')->where('warehouse_id', $warehouse_id)->get();
+        foreach ($proData as $pd) {
+            $pdData = DB::table('products')->where('id', $pd->products_id)->select('id', 'Price', 'category_id', 'made_by_id', 'image', 'marketing_name', 'scientific_name', 'arabic_name', 'exp_date')->first();
+            $madeData = DB::table('made_by')->where('id', $pdData->id)->select('made_by_name', 'made_by_Arabic_name')->first();
+            $cateData = DB::table('category')->where('id', $pdData->id)->select('Category_name', 'Arabic_Category_name')->first();
+            $pd->made_by_name = $madeData->made_by_name;
+            $pd->made_by_Arabic_name = $madeData->made_by_Arabic_name;
+            $pd->Category_name = $cateData->Category_name;
+            $pd->Arabic_Category_name = $cateData->Arabic_Category_name;
+            $pd->Price = $pdData->Price;
+            $pd->image = $pdData->image;
+            $pd->marketing_name = $pdData->marketing_name;
+            $pd->scientific_name = $pdData->scientific_name;
+            $pd->arabic_name = $pdData->arabic_name;
+            $pd->exp_date = $pdData->exp_date;
+            $ch = DB::table('favorates')->where('products_id', $pdData->id)->where('phamacist_id', $phamacist_id)->first();
+            if (isset($ch)) {
+                $pd->favorates = true;
+            } else {
+                $pd->favorates = false;
+            }
+        }
+        return response()->json([
+            "status" => 1,
+            "message" => "succes",
+            "data" => $proData
+        ]);
+    }
+    // FUNCTION OLD 
+    public function getAllProductsNEWWWWWWWWWWWW($phamacist_id)
     {
         $proData = DB::table('products')->select('id', 'Price', 'category_id', 'made_by_id', 'image', 'marketing_name', 'scientific_name', 'arabic_name', 'exp_date')->get();
         $warehouse_id = 1;
@@ -117,15 +150,21 @@ class productController extends Controller
     }
     public function getAllProductsToWarehouse($warehouse_id)
     {
-        $proData = DB::table('products')->select('id', 'Price', 'category_id', 'made_by_id', 'image', 'marketing_name', 'scientific_name', 'arabic_name', 'exp_date')->get();
+        $proData = DB::table('products_warehouse')->where('warehouse_id', $warehouse_id)->get();
         foreach ($proData as $pd) {
-            // dd("asd");
-            $madeData = DB::table('made_by')->where('id', $pd->made_by_id)->select('made_by_name', 'made_by_Arabic_name')->first();
-            $cateData = DB::table('category')->where('id', $pd->category_id)->select('Category_name', 'Arabic_Category_name')->first();
+            $pdData = DB::table('products')->where('id', $pd->products_id)->select('id', 'Price', 'category_id', 'made_by_id', 'image', 'marketing_name', 'scientific_name', 'arabic_name', 'exp_date')->first();
+            $madeData = DB::table('made_by')->where('id', $pdData->id)->select('made_by_name', 'made_by_Arabic_name')->first();
+            $cateData = DB::table('category')->where('id', $pdData->id)->select('Category_name', 'Arabic_Category_name')->first();
             $pd->made_by_name = $madeData->made_by_name;
             $pd->made_by_Arabic_name = $madeData->made_by_Arabic_name;
             $pd->Category_name = $cateData->Category_name;
             $pd->Arabic_Category_name = $cateData->Arabic_Category_name;
+            $pd->Price = $pdData->Price;
+            $pd->image = $pdData->image;
+            $pd->marketing_name = $pdData->marketing_name;
+            $pd->scientific_name = $pdData->scientific_name;
+            $pd->arabic_name = $pdData->arabic_name;
+            $pd->exp_date = $pdData->exp_date;
         }
         return response()->json([
             "status" => 1,
@@ -135,8 +174,8 @@ class productController extends Controller
     }
     public function getSingleProduct($phamacist_id, $products_id)
     {
-        $proData = DB::table('products')->select('id', 'Price', 'category_id', 'made_by_id', 'image', 'marketing_name', 'scientific_name', 'arabic_name', 'exp_date')->first();
-        $ch = DB::table('favorates')->where('products_id', $phamacist_id)->where('phamacist_id', $phamacist_id)->first();
+        $proData = DB::table('products')->where('id', $products_id)->select('id', 'Price', 'category_id', 'made_by_id', 'image', 'marketing_name', 'scientific_name', 'arabic_name', 'exp_date')->first();
+        $ch = DB::table('favorates')->where('products_id', $products_id)->where('phamacist_id', $phamacist_id)->first();
         if (isset($ch)) {
             $proData->favorates = true;
         } else {
@@ -172,15 +211,28 @@ class productController extends Controller
             "phamacist_id" => "required|integer",
         ]);
         $favPh = DB::table('favorates')->where('phamacist_id', $favData['phamacist_id'])->get();
-        $i = 0;
         foreach ($favPh as $f) {
-            $fda[$i] =  DB::table('products')->where('id', $f->products_id)->first();
-            $i++;
+            $fda =  DB::table('products')->where('id', $f->products_id)->select('id', 'Price', 'category_id', 'made_by_id', 'image', 'marketing_name', 'scientific_name', 'arabic_name', 'exp_date')->first();
+            $madeData = DB::table('made_by')->where('id', $fda->made_by_id)->select('made_by_name', 'made_by_Arabic_name')->first();
+            $cateData = DB::table('category')->where('id', $fda->category_id)->select('Category_name', 'Arabic_Category_name')->first();
+            $f->made_by_name = $madeData->made_by_name;
+            $f->made_by_Arabic_name = $madeData->made_by_Arabic_name;
+            $f->Category_name = $cateData->Category_name;
+            $f->Arabic_Category_name = $cateData->Arabic_Category_name;
+            $f->favorates = true;
+            $f->Price = $fda->Price;
+            $f->image = $fda->image;
+            $f->marketing_name = $fda->marketing_name;
+            $f->scientific_name = $fda->scientific_name;
+            $f->arabic_name = $fda->arabic_name;
+            $f->exp_date = $fda->exp_date;
+            // dd($f);
+
         }
         return response()->json([
             "status" => 1,
             "message" => "succes",
-            "data" => $fda
+            "data" => $favPh
         ]);
     }
     public function deleteFavorates(Request $request, $id)

@@ -153,6 +153,10 @@ class orderController extends Controller
             "order_status" => "required|string",
         ]);
         order::where('id', $request->order_id)->update(array('status' => $request->order_status));
+        if($request->order_status=="Delivered")
+        {
+            
+        }
         return response()->json([
             "status" => 1,
             "message" => "succes"
