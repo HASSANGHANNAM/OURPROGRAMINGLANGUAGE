@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\DB;
 use App\Models\products_warehouse;
 use App\Models\warehouse;
 
+use function Laravel\Prompts\table;
+
 class orderController extends Controller
 {
     public function create_order(Request $request, $warehouse_id, $phatmacist_id)
@@ -74,26 +76,48 @@ class orderController extends Controller
             "message" => "succes"
         ]);
     }
-    // TODO:    if status + delet old and create new
-    public function update_order(Request $request, $warehouse_id, $phatmacist_id)
+    public function update_order(Request $request, $order_id)
     {
-        $orData = $request->validate([
-            "Quantity" => "required|integer",
-            "product_id" => "required|integer",
-        ]);
-        $ordata = [
-            'warehouse_id' => $warehouse_id,
-            'phatmacist_id' => $phatmacist_id,
-            'status' => "In preparation",
-            'payment_status' => "unpaid"
-        ];
-        $orDa = order::where('products_id', $orData['product_id'])->update(array('warehouse_id' => $ordata['warehouse_id'], 'phatmacist_id' => $ordata['phatmacist_id'], 'status' => $ordata['status'], 'payment_status' => $ordata['payment_status']));
-        $orprodata = [
-            'Quantity' => $orData['Quantity'],
-            'product_id' => $orData['product_id'],
-            'order_id' => $orDa['id']
-        ];
-        $orDa = order_product::where('order_id', $orDa['id'])->update(array('Quantity' => $orprodata['Quantity'], 'product_id' => $orprodata['product_id'], 'order_id' => $orprodata['order_id']));
+        $findd = order::find($order_id);
+        if ($findd == null) {
+            return response()->json([
+                "status" => 0,
+                "message" => "order not found"
+            ]);
+        }
+        if ($findd->status == "Delivered") {
+            return response()->json([
+                "status" => 0,
+                "message" => "order was Delivered"
+            ]);
+        }
+        $datarequest = $request->json()->all();
+        $cc = DB::table('order_products')->where('order_id', $order_id)->delete();
+        foreach ($datarequest as $product) {
+            // $validatedData = $this->validate($product, [
+            // "Quantity" => "required|integer",
+            //     "product_id" => "required|integer",
+            // ]);
+            $check = DB::table('products')->where('id', $product['product_id'])->first();
+            if ($check != null) {
+                $check2 = DB::table('order_products')->where("Product_id", $product['product_id'])->where("order_id", $order_id)->first();
+                if ($check2 == null) {
+                    $orprodata = [
+                        'Quantity' => $product['Quantity'],
+                        'Product_id' => $product['product_id'],
+                        'order_id' => $order_id
+                    ];
+                    $pp = order_product::create($orprodata);
+                } else {
+                    order_product::where('id', $check2->id)->update(array('Quantity' => $product['Quantity'] + $check2->Quantity));
+                }
+            } else {
+                return response()->json([
+                    "status" => 0,
+                    "message" => "product not found"
+                ]);
+            }
+        }
         return response()->json([
             "status" => 1,
             "message" => "succes"
@@ -137,7 +161,14 @@ class orderController extends Controller
             "order_status" => "required|string",
         ]);
         order::where('id', $request->order_id)->update(array('status' => $request->order_status));
+        $ordata = DB::table('order')->where('id', $request->order_id)->first();
         if ($request->order_status == "Delivered") {
+            $productorder = DB::table('order_products')->where('order_id', $request->order_id)->get();
+            foreach ($productorder as $pr) {
+
+                $pppp = DB::table('products_warehouse')->where('products_id', $pr->Product_id)->where('warehouse_id', $ordata->warehouse_id)->first();
+                products_warehouse::where('id', $pppp->id)->update(array('Quantity' => $pppp->Quantity - $pr->Quantity));
+            }
         }
         return response()->json([
             "status" => 1,

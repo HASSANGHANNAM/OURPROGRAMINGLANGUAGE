@@ -10,6 +10,8 @@ use App\Http\Controllers\Api\orderController;
 use App\Http\Controllers\Api\productController;
 use App\Http\Controllers\Api\searchController;
 use App\Http\Controllers\Api\WarehouseController;
+use App\Models\order;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -48,6 +50,8 @@ Route::put('/update_made_by', [madeByController::class, 'update_made_by']);
 Route::put('/update_category', [categoryController::class, 'update_category']);
 Route::put('/update_city', [cityController::class, 'update_city']);
 Route::put('/update_product', [productController::class, 'update_product']);
+Route::put('/update_order/{order_id}', [orderController::class, 'update_order']);
+Route::put('/update_order_status', [orderController::class, 'update_order_status']);
 
 
 Route::get('/getAllCitys', [cityController::class, 'getAllCitys']);

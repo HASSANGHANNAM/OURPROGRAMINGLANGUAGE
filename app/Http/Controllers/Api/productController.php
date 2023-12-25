@@ -9,40 +9,12 @@ use App\Models\product;
 use App\Models\products_warehouse;
 use App\Models\favorates;
 use App\Models\warehouse;
-// class ProductController extends Controller
-// {
-//     public function store(Request $request)
-//     {
-//         $data = $request->json()->all();
 
-//         foreach ($data as $item) {
-//             // Validate input data if needed
-//             $validatedData = $this->validate($item, [
-//                 'Price' => 'required|numeric',
-//                 'category_id' => 'required|exists:categories,id',
-//                 'made_by_id' => 'required|exists:manufacturers,id',
-//                 'image' => 'required|string',
-//                 'marketing_name' => 'required|string',
-//                 'scientific_name' => 'required|string',
-//                 'arabic_name' => 'required|string',
-//                 'exp_date' => 'required|date',
-//                 'Quantity' => 'required|integer',
-//             ]);
-
-//             // Create and save the product
-//             Product::create($validatedData);
-//         }
-
-//         return response()->json(['message' => 'Products stored successfully'], 201);
-//     }
-// }
 class productController extends Controller
 {
     public function create_product(Request $request, $warehouse_id)
     {
         $datarequest = $request->json()->all();
-        //dd($data);
-
         $findd = warehouse::find($warehouse_id);
         if ($findd == null) {
             return response()->json([
@@ -89,7 +61,6 @@ class productController extends Controller
             "message" => "succes"
         ]);
     }
-    //TODO:
     public function update_product(Request $request)
     {
         $proData = $request->validate([
@@ -98,17 +69,51 @@ class productController extends Controller
             "category_id" => "required|integer",
             "made_by_id" => "required|integer",
             "image" => "required",
-            "marketing_name" => "required|string|max:45",
-            "scientific_name" => "required|string|max:45",
-            "arabic_name" => "required|string|max:45",
             "exp_date" => "required",
             "Quantity" => "required|integer"
         ]);
-        $image = base64_decode($request->image);
+        $pp = DB::table('products')->where('id', $request->id)->first();
+        if ($pp == null) {
+            return response()->json([
+                "status" => 0,
+                "message" => "product not found"
+            ]);
+        }
+        if ($pp->marketing_name == $request->marketing_name) {
+            $proData = $request->validate([
+                "marketing_name" => "required|string|max:45"
+            ]);
+        } else {
+            $proData = $request->validate([
+                "marketing_name" => "required|unique:products|string|max:45",
+            ]);
+        }
+        if ($pp->arabic_name == $request->arabic_name) {
+            $proData = $request->validate([
+                "arabic_name" => "required|string|max:45"
+            ]);
+        } else {
+            $proData = $request->validate([
+                "arabic_name" => "required|unique:products|string|max:45",
+            ]);
+        }
+        if ($pp->scientific_name == $request->scientific_name) {
+            $proData = $request->validate([
+                "scientific_name" => "required|string|max:45"
+            ]);
+        } else {
+            $proData = $request->validate([
+                "scientific_name" => "required|unique:products|string|max:45",
+            ]);
+        }
         $extension = ".jpg"; //. $extension;
+        $path1 = "images/" . $pp->marketing_name . $extension;
+        if (file_exists($path1)) {
+            @unlink($path1);
+        }
+        $image = base64_decode($request->image);
         $path = "/images/" . $request->marketing_name . $extension;
         file_put_contents(public_path($path), $image);
-        $pp = DB::table('products')->where('id', $request->id)->first();
         product::where('id', $request->id)->update(array('Price' => $request->Price, 'category_id' => $request->category_id, 'made_by_id' => $request->made_by_id, 'image' => $path, 'marketing_name' => $request->marketing_name, 'scientific_name' => $request->scientific_name, 'arabic_name' => $request->arabic_name, 'exp_date' => $request->exp_date));
         $pwdata = products_warehouse::where('products_id', $pp->id)->update(array('Quantity' => $request->Quantity));
         return response()->json([
@@ -122,8 +127,8 @@ class productController extends Controller
         $proData = DB::table('products_warehouse')->where('warehouse_id', $warehouse_id)->get();
         foreach ($proData as $pd) {
             $pdData = DB::table('products')->where('id', $pd->products_id)->select('id', 'Price', 'category_id', 'made_by_id', 'image', 'marketing_name', 'scientific_name', 'arabic_name', 'exp_date')->first();
-            $madeData = DB::table('made_by')->where('id', $pdData->id)->select('made_by_name', 'made_by_Arabic_name')->first();
-            $cateData = DB::table('category')->where('id', $pdData->id)->select('Category_name', 'Arabic_Category_name')->first();
+            $madeData = DB::table('made_by')->where('id', $pdData->made_by_id)->select('made_by_name', 'made_by_Arabic_name')->first();
+            $cateData = DB::table('category')->where('id', $pdData->category_id)->select('Category_name', 'Arabic_Category_name')->first();
             $pd->made_by_name = $madeData->made_by_name;
             $pd->made_by_Arabic_name = $madeData->made_by_Arabic_name;
             $pd->Category_name = $cateData->Category_name;
@@ -183,8 +188,8 @@ class productController extends Controller
         $proData = DB::table('products_warehouse')->where('warehouse_id', $warehouse_id)->get();
         foreach ($proData as $pd) {
             $pdData = DB::table('products')->where('id', $pd->products_id)->select('id', 'Price', 'category_id', 'made_by_id', 'image', 'marketing_name', 'scientific_name', 'arabic_name', 'exp_date')->first();
-            $madeData = DB::table('made_by')->where('id', $pdData->id)->select('made_by_name', 'made_by_Arabic_name')->first();
-            $cateData = DB::table('category')->where('id', $pdData->id)->select('Category_name', 'Arabic_Category_name')->first();
+            $madeData = DB::table('made_by')->where('id', $pdData->made_by_id)->select('made_by_name', 'made_by_Arabic_name')->first();
+            $cateData = DB::table('category')->where('id', $pdData->category_id)->select('Category_name', 'Arabic_Category_name')->first();
             $pd->made_by_name = $madeData->made_by_name;
             $pd->made_by_Arabic_name = $madeData->made_by_Arabic_name;
             $pd->Category_name = $cateData->Category_name;
@@ -256,8 +261,6 @@ class productController extends Controller
             $f->scientific_name = $fda->scientific_name;
             $f->arabic_name = $fda->arabic_name;
             $f->exp_date = $fda->exp_date;
-            // dd($f);
-
         }
         return response()->json([
             "status" => 1,

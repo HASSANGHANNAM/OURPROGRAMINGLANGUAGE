@@ -211,26 +211,55 @@ class MainController extends Controller
             "data" => $profile_data
         ]);
     }
-    //TODO: warehouse + uniqe 
     public function update_profile(Request $request)
     {
         $user_data = auth()->user();
-        dd($user_data);
+        if ($user_data->Email_address == $request->Email_address) {
+            $user = $request->validate([
+                "Email_address" => "max:255|required|email|regex:/(.+)@gmail.com/|unique:users"
+            ]);
+        } else {
+            $user = $request->validate([
+                "Email_address" => "max:255|required|email|regex:/(.+)@gmail.com/"
+            ]);
+        }
+        if ($user_data->Phone_number == $request->Phone_number) {
+            $user = $request->validate([
+                "Phone_number" => "required|regex:/^([0-9\+]*)$/|min:10|max:10|regex:/09(.+)/|unique:users"
+            ]);
+        } else {
+            $user = $request->validate([
+                "Phone_number" => "required|regex:/^([0-9\+]*)$/|min:10|max:10|regex:/09(.+)/"
+            ]);
+        }
+        // type ware or pham
         if ($user_data['type'] == 2) {
             $user = $request->validate([
-                "Full_name" => "required|max:45",
-                "Email_address" => "max:255|required|email|regex:/(.+)@gmail.com/", //|unique:users
-                "Phone_number" => "required|regex:/^([0-9\+]*)$/|min:10|max:10|regex:/09(.+)/", //|unique:users
                 "Password" => ['required', 'string', password::min(8)],
-                "Pharmacy_name" => "required|max:45|string", //|unique:phatmacist
                 "City" => "required|integer",
                 "Pharmacy_address" => "required|max:45|string"
             ]);
             $lo = DB::table('phatmacist')->where('user_id',  $user_data->id)->first();
-            // dd($lo);
+            if ($lo->Full_name == $request->Full_name) {
+                $user = $request->validate([
+                    "Full_name" => "required|max:45|unique:phatmacist"
+                ]);
+            } else {
+                $user = $request->validate([
+                    "Full_name" => "required|max:45"
+                ]);
+            }
+            if ($lo->Pharmacy_name == $request->Pharmacy_name) {
+                $user = $request->validate([
+                    "Pharmacy_name" => "required|max:45|string"
+                ]);
+            } else {
+                $user = $request->validate([
+                    "Pharmacy_name" => "required|max:45|string|unique:phatmacist"
+                ]);
+            }
             location::where('id', $lo->location_id)->update(array('address' => $request->Pharmacy_address, 'city_id' => $request->City));
             $location = DB::table('location')->where('address', $request->Pharmacy_address)->first();
-            //dd($location);
             $user = User::where('id', $user_data->id)->update(array(
                 'Phone_number' => $request->Phone_number, 'Email_address' => $request->Email_address, 'password' => Hash::make($request->Password)
             ));
@@ -242,6 +271,34 @@ class MainController extends Controller
                 "message" => "succes"
             ]);
         } else if ($user_data['type'] == 1) {
+            $user = $request->validate([
+                "Password" => ['required', 'string', password::min(8)],
+                "City" => "required|integer",
+                "warehouse_address" => "required|max:45|string"
+            ]);
+            $lw = DB::table('owner')->where('user_id',  $user_data->id)->first();
+            $lo = DB::table('warehouse')->where('owner',  $lw->id)->first();
+            if ($lo->warehouse_name == $request->warehouse_name) {
+                $user = $request->validate([
+                    "warehouse_name" => "required|max:45|unique:warehouse"
+                ]);
+            } else {
+                $user = $request->validate([
+                    "warehouse_name" => "required|max:45"
+                ]);
+            }
+            location::where('id', $lo->location_id)->update(array('address' => $request->warehouse_address, 'city_id' => $request->City));
+            $location = DB::table('location')->where('address', $request->warehouse_address)->first();
+            $user = User::where('id', $user_data->id)->update(array(
+                'Phone_number' => $request->Phone_number, 'Email_address' => $request->Email_address, 'password' => Hash::make($request->Password)
+            ));
+            $warehouse = warehouse::where('user_id', $user_data->id)->update(array(
+                'warehouse_name' => $request->warehouse_name, 'location_id' => $location->id
+            ));
+            return response()->json([
+                "status" => 1,
+                "message" => "succes"
+            ]);
         }
     }
     public function logout()
@@ -355,9 +412,6 @@ class MainController extends Controller
         // |min:3|max:45
         // |digits_between:1,7
 
-        // if(\File::exists(public_path('upload/bio.png'))){
-        //     \File::delete(public_path('upload/bio.png'));
-        //     }
 
 
             // if (file_exists($image_path)) {
