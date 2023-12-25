@@ -234,7 +234,12 @@ class productController extends Controller
             "phamacist_id" => "required|integer",
             "products_id" => "required|integer",
         ]);
-        $favData = favorates::create($proData);
+        $favPh = DB::table('favorates')->where('phamacist_id', $request->phamacist_id)->where('products_id', $request->products_id)->first();
+        if ($favPh == null) {
+            $favData = favorates::create($proData);
+        } else {
+            $favPh = DB::table('favorates')->where('phamacist_id', $request->phamacist_id)->where('products_id', $request->products_id)->delete();
+        }
         return response()->json([
             "status" => 1,
             "message" => "succes"
