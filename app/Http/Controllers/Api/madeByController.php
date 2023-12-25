@@ -27,7 +27,6 @@ class madeByController extends Controller
             "message" => "not succes"
         ]);
     }
-    //TODO: requerd
     public function update_made_by(Request $request)
     {
         $request->validate([
