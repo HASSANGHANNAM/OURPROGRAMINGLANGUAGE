@@ -139,11 +139,13 @@ class productController extends Controller
             $pd->scientific_name = $pdData->scientific_name;
             $pd->arabic_name = $pdData->arabic_name;
             $pd->exp_date = $pdData->exp_date;
-            $ch = DB::table('favorates')->where('products_id', $pdData->id)->where('phamacist_id', $phamacist_id)->first();
-            if (isset($ch)) {
-                $pd->favorates = true;
-            } else {
-                $pd->favorates = false;
+            if ($phamacist_id != null) {
+                $ch = DB::table('favorates')->where('products_id', $pdData->id)->where('phamacist_id', $phamacist_id)->first();
+                if (isset($ch)) {
+                    $pd->favorates = true;
+                } else {
+                    $pd->favorates = false;
+                }
             }
         }
         return response()->json([
@@ -273,6 +275,7 @@ class productController extends Controller
             "data" => $favPh
         ]);
     }
+    // to rec
     public function deleteFavorates(Request $request, $id)
     {
         $favData = $request->validate([

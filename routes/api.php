@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\orderController;
 use App\Http\Controllers\Api\productController;
 use App\Http\Controllers\Api\searchController;
 use App\Http\Controllers\Api\WarehouseController;
+use App\Http\Controllers\Api\basketController;
 use App\Models\order;
 
 /*
@@ -42,6 +43,7 @@ Route::post('/create_city', [cityController::class, 'create_city']);
 Route::post('/create_order/{warehouse_id}/{phatmacist_id}', [orderController::class, 'create_order']);
 Route::post('/create_product/{warehouse_id}', [productController::class, 'create_product']);
 Route::post('/putInfavorates', [productController::class, 'putInfavorates']);
+Route::post('/putInProduct_basket', [basketController::class, 'putInProduct_basket']);
 
 
 Route::put('/acceptOwner', [MainController::class, 'acceptOwner']);
@@ -52,17 +54,21 @@ Route::put('/update_city', [cityController::class, 'update_city']);
 Route::put('/update_product', [productController::class, 'update_product']);
 Route::put('/update_order/{order_id}', [orderController::class, 'update_order']);
 Route::put('/update_order_status', [orderController::class, 'update_order_status']);
+Route::put('/update_order_status_payment', [orderController::class, 'update_order_status_payment']);
 
 
 Route::get('/getAllCitys', [cityController::class, 'getAllCitys']);
 Route::get('/getAllMadeby', [madeByController::class, 'getAllMadeby']);
 Route::get('/getAllCategorys', [categoryController::class, 'getAllCategorys']);
 Route::get('/getAllProducts/{phamacist_id}', [productController::class, 'getAllProducts']);
+Route::get('/getAllProductsInbasket/{phamacist_id}', [basketController::class, 'getAllProductsInbasket']);
 Route::get('/getAllProductsToWarehouse/{warehouse_id}', [productController::class, 'getAllProductsToWarehouse']);
 Route::get('/getSingleProduct/{phamacist_id}/{products_id}', [productController::class, 'getSingleProduct']);
 Route::get('/getAllFavorates', [productController::class, 'getAllFavorates']);
 Route::get('/getAllOrders/{id}', [orderController::class, 'getAllOrders']);
+Route::get('/getAllOrdersTowarehouse/{id}', [orderController::class, 'getAllOrdersTowarehouse']);
 Route::get('/search_product', [searchController::class, 'search_product']);
 
 
 Route::delete('/deleteFavorates/{id}', [productController::class, 'deleteFavorates']);
+Route::delete('/deleteProduct_basket/{id}', [basketController::class, 'deleteProduct_basket']);

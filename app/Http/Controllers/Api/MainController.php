@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Auth;
 
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rules\Password;
+use App\Models\Product_basket;
 
 class MainController extends Controller
 {
@@ -71,6 +72,10 @@ class MainController extends Controller
             'user_id' => $user['id']
         ];
         $phatmacist = phatmacist::create($phatmacistData);
+        $Product_basketData = [
+            'phatmacist_id' => $phatmacist['id'],
+        ];
+        Product_basket::create($Product_basketData);
         $accessToken = $user->createToken('auth_token')->plainTextToken;
         return response()->json([
             "status" => 1,
@@ -114,6 +119,42 @@ class MainController extends Controller
             ]);
         }
         $accessToken = auth()->user()->createToken('auth_token')->plainTextToken;
+        if (auth()->user()->type == 1) {
+            $user_id = DB::table('owner')->where('user_id', auth()->user()->id)->first();
+            if ($user_id->status == "acceptable") {
+                $user_id = DB::table('warehouse')->where('user_id', auth()->user()->id)->first();
+                return response()->json([
+                    "status" => 1,
+                    "message" => "loged in",
+                    'access_token' => $accessToken,
+                    'warehouse_id' => $user_id->id
+                ]);
+            }
+            return response()->json([
+                "status" => 1,
+                "message" => "loged in",
+                'access_token' => $accessToken,
+                'owner_id' => $user_id->id
+            ]);
+        }
+        if (auth()->user()->type == 2) {
+            $user_id = DB::table('phatmacist')->where('user_id', auth()->user()->id)->first();
+            return response()->json([
+                "status" => 1,
+                "message" => "loged in",
+                'access_token' => $accessToken,
+                'pharmacy_id' => $user_id->id
+            ]);
+        }
+        if (auth()->user()->type == 3) {
+            $user_id = DB::table('super_admin')->where('user_id', auth()->user()->id)->first();
+            return response()->json([
+                "status" => 1,
+                "message" => "loged in",
+                'access_token' => $accessToken,
+                'admin_id' => $user_id->id
+            ]);
+        }
         return response()->json([
             "status" => 1,
             "message" => "loged in",

@@ -8,6 +8,7 @@ use App\Models\location;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use App\Models\phatmacist;
+use App\Models\Product_basket;
 
 class phatmacistSeeder extends Seeder
 {
@@ -31,6 +32,10 @@ class phatmacistSeeder extends Seeder
             'user_id' => $user['id']
         ];
         $phatmacist = phatmacist::create($phatmacistData);
+        $Product_basketData = [
+            'phatmacist_id' => $phatmacist['id'],
+        ];
+        Product_basket::create($Product_basketData);
         $accessToken = $user->createToken('auth_token')->plainTextToken;
     }
 }

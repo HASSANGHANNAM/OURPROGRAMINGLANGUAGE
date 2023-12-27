@@ -148,6 +148,38 @@ class orderController extends Controller
             $i++;
             $j = 0;
         }
+
+        return response()->json([
+            "status" => 1,
+            "message" => "succes",
+            "data" => $data
+        ]);
+    }
+    public function getAllOrdersTowarehouse($id)
+    {
+        $orData = DB::table('order')->where('warehouse_id', $id)->orderBy('id', 'ASC')->get();
+        $i = 0;
+        $j = 0;
+        $data = [];
+        foreach ($orData as $o) {
+            //    $waorder = DB::table('warehouse')->where('id', )->first();
+            $data[$i]['status'] = $o->status;
+            $data[$i]['payment_status'] = $o->payment_status;
+            // $data[$i]['Warehouse_name'] = $waorder->Warehouse_name;
+            $allorders = DB::table('order_products')->where('order_id', $o->id)->get();
+            foreach ($allorders as $or) {
+                $data[$i]['products'][$j] = DB::table('products')->where('id', $or->Product_id)->first();
+                $cateData = DB::table('category')->where('id',  $data[$i]['products'][$j]->id)->select('Category_name', 'Arabic_Category_name')->first();
+                $madeData = DB::table('made_by')->where('id',  $data[$i]['products'][$j]->id)->select('made_by_name', 'made_by_Arabic_name')->first();
+                $data[$i]['products'][$j]->made_by_name = $madeData->made_by_name;
+                $data[$i]['products'][$j]->made_by_Arabic_name = $madeData->made_by_Arabic_name;
+                $data[$i]['products'][$j]->Category_name = $cateData->Category_name;
+                $data[$i]['products'][$j]->Arabic_Category_name =  $cateData->Arabic_Category_name;
+                $j++;
+            }
+            $i++;
+            $j = 0;
+        }
         return response()->json([
             "status" => 1,
             "message" => "succes",
@@ -188,3 +220,5 @@ class orderController extends Controller
         ]);
     }
 }
+//["On request", "In preparation", "Delivered"]
+//["paid", "unpaid"]
