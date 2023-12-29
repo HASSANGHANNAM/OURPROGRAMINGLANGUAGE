@@ -70,6 +70,12 @@ class searchController extends Controller
                 ]);
             } else {
                 $proDataSearch = DB::table('products')->where('marketing_name', $name)->orderBy('id', 'ASC')->get();
+                if (count($proDataSearch) == 0) {
+                    $proDataSearch = DB::table('products')->where('arabic_name', $name)->orderBy('id', 'ASC')->get();
+                }
+                if (count($proDataSearch) == 0) {
+                    $proDataSearch = DB::table('products')->where('scientific_name', $name)->orderBy('id', 'ASC')->get();
+                }
                 if (count($proDataSearch) != 0) {
                     foreach ($proDataSearch as $pd) {
                         $waredata = DB::table('products_warehouse')->where('warehouse_id', 1)->where('products_id', $pd->id)->first();
