@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Api\productController;
-// TODO: substring search
+// TODO: substring search + Quantity 
 class searchController extends Controller
 {
     public function search_product()
@@ -32,8 +32,10 @@ class searchController extends Controller
                     if (count($proDataSearch) != 0) {
 
                         foreach ($proDataSearch as $pd) {
+                            $waredata = DB::table('products_warehouse')->where('warehouse_id', 1)->where('products_id', $pd->id)->first();
                             $madeData = DB::table('made_by')->where('id', $pd->made_by_id)->select('made_by_name', 'made_by_Arabic_name')->first();
                             $cateData = DB::table('category')->where('id', $pd->category_id)->select('Category_name', 'Arabic_Category_name')->first();
+                            $pd->Quantity = $waredata->Quantity;
                             $pd->made_by_name = $madeData->made_by_name;
                             $pd->made_by_Arabic_name = $madeData->made_by_Arabic_name;
                             $pd->Category_name = $cateData->Category_name;
@@ -55,19 +57,25 @@ class searchController extends Controller
                     }
                     return response()->json([
                         "status" => 0,
-                        "message" => "not founde"
+                        "message" => "not founde",
+                        "data" => []
+
                     ]);
                 }
                 return response()->json([
                     "status" => 0,
-                    "message" => "not founde"
+                    "message" => "not founde",
+                    "data" => []
+
                 ]);
             } else {
                 $proDataSearch = DB::table('products')->where('marketing_name', $name)->orderBy('id', 'ASC')->get();
                 if (count($proDataSearch) != 0) {
                     foreach ($proDataSearch as $pd) {
+                        $waredata = DB::table('products_warehouse')->where('warehouse_id', 1)->where('products_id', $pd->id)->first();
                         $madeData = DB::table('made_by')->where('id', $pd->made_by_id)->select('made_by_name', 'made_by_Arabic_name')->first();
                         $cateData = DB::table('category')->where('id', $pd->category_id)->select('Category_name', 'Arabic_Category_name')->first();
+                        $pd->Quantity = $waredata->Quantity;
                         $pd->made_by_name = $madeData->made_by_name;
                         $pd->made_by_Arabic_name = $madeData->made_by_Arabic_name;
                         $pd->Category_name = $cateData->Category_name;
@@ -89,7 +97,9 @@ class searchController extends Controller
                 }
                 return response()->json([
                     "status" => 0,
-                    "message" => "not founde"
+                    "message" => "not founde",
+                    "data" => []
+
                 ]);
             }
         } elseif (isset($category)) {
@@ -100,14 +110,18 @@ class searchController extends Controller
             if ($cat_id == null) {
                 return response()->json([
                     "status" => 0,
-                    "message" => "not founde"
+                    "message" => "not founde",
+                    "data" => []
+
                 ]);
             }
             $proDataSearch = DB::table('products')->where('category_id', $cat_id->id)->orderBy('id', 'ASC')->get();
             if (count($proDataSearch) != 0) {
                 foreach ($proDataSearch as $pd) {
+                    $waredata = DB::table('products_warehouse')->where('warehouse_id', 1)->where('products_id', $pd->id)->first();
                     $madeData = DB::table('made_by')->where('id', $pd->made_by_id)->select('made_by_name', 'made_by_Arabic_name')->first();
                     $cateData = DB::table('category')->where('id', $pd->category_id)->select('Category_name', 'Arabic_Category_name')->first();
+                    $pd->Quantity = $waredata->Quantity;
                     $pd->made_by_name = $madeData->made_by_name;
                     $pd->made_by_Arabic_name = $madeData->made_by_Arabic_name;
                     $pd->Category_name = $cateData->Category_name;
@@ -129,7 +143,9 @@ class searchController extends Controller
             } else {
                 return response()->json([
                     "status" => 0,
-                    "message" => "not founde"
+                    "message" => "not founde",
+                    "data" => []
+
                 ]);
             }
         }

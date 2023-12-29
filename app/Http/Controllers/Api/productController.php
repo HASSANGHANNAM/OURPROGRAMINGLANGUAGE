@@ -166,8 +166,8 @@ class productController extends Controller
             $pd->made_by_Arabic_name = $madeData->made_by_Arabic_name;
             $pd->Category_name = $cateData->Category_name;
             $pd->Arabic_Category_name = $cateData->Arabic_Category_name;
-            $ch = DB::table('favorates')->where('products_id', $pd->id)->where('phamacist_id', $phamacist_id)->first();
             $ch2 = DB::table('products_warehouse')->where('products_id', $pd->id)->where('warehouse_id', $warehouse_id)->first();
+            $ch = DB::table('favorates')->where('products_id', $pd->id)->where('phamacist_id', $phamacist_id)->first();
             if (isset($ch)) {
                 $pd->favorates = true;
             } else {

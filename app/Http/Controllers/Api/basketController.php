@@ -55,18 +55,23 @@ class basketController extends Controller
     }
     public function getAllProductsInbasket($phamacist_id)
     {
+        $priceAllproducte = 0;
         $pbPh = DB::table('Product_basket')->where('phatmacist_id', $phamacist_id)->first();
         if ($pbPh == null) {
             return response()->json([
                 "status" => 0,
-                "message" => "Product_basket not found "
+                "message" => "Product_basket not found ",
+                "data" => [],
+                "priceAllproducte" => $priceAllproducte
             ]);
         }
         $proData = DB::table('Product_basket_products')->where('Product_basket_id', $pbPh->id)->get();
         if (count($proData) == 0) {
             return response()->json([
                 "status" => 1,
-                "message" => "no products Product_basket "
+                "message" => "no products Product_basket ",
+                "data" => $proData,
+                "priceAllproducte" => $priceAllproducte
             ]);
         }
         foreach ($proData as $pd) {
@@ -84,6 +89,7 @@ class basketController extends Controller
             $pd->scientific_name = $pdData->scientific_name;
             $pd->arabic_name = $pdData->arabic_name;
             $pd->exp_date = $pdData->exp_date;
+            $priceAllproducte += $pd->PriceAllproducts;
             if ($phamacist_id != null) {
                 $ch = DB::table('favorates')->where('products_id', $pdData->id)->where('phamacist_id', $phamacist_id)->first();
                 if (isset($ch)) {
@@ -96,7 +102,9 @@ class basketController extends Controller
         return response()->json([
             "status" => 1,
             "message" => "succes",
-            "data" => $proData
+            "data" => $proData,
+            "priceAllproducte" => $priceAllproducte
+
         ]);
     }
 }
