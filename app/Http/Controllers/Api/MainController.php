@@ -255,92 +255,83 @@ class MainController extends Controller
     public function update_profile(Request $request)
     {
         $user_data = auth()->user();
-        if ($user_data->Email_address == $request->Email_address) {
+        if (isset($request->Email_address)) {
             $user = $request->validate([
                 "Email_address" => "max:255|required|email|regex:/(.+)@gmail.com/|unique:users"
             ]);
-        } else {
-            $user = $request->validate([
-                "Email_address" => "max:255|required|email|regex:/(.+)@gmail.com/"
-            ]);
+            User::where('id', $user_data->id)->update(array('Email_address' => $request->Email_address));
         }
-        if ($user_data->Phone_number == $request->Phone_number) {
+        if (isset($request->Phone_number)) {
             $user = $request->validate([
                 "Phone_number" => "required|regex:/^([0-9\+]*)$/|min:10|max:10|regex:/09(.+)/|unique:users"
             ]);
-        } else {
+            User::where('id', $user_data->id)->update(array('Phone_number' => $request->Phone_number));
+        }
+        if (isset($request->Password)) {
             $user = $request->validate([
-                "Phone_number" => "required|regex:/^([0-9\+]*)$/|min:10|max:10|regex:/09(.+)/"
+                "Password" => ['required', 'string', password::min(8)],
             ]);
+            User::where('id', $user_data->id)->update(array('password' => Hash::make($request->Password)));
         }
         // type ware or pham
         if ($user_data['type'] == 2) {
-            $user = $request->validate([
-                "Password" => ['required', 'string', password::min(8)],
-                "City" => "required|integer",
-                "Pharmacy_address" => "required|max:45|string"
-            ]);
             $lo = DB::table('phatmacist')->where('user_id',  $user_data->id)->first();
-            if ($lo->Full_name == $request->Full_name) {
+            if (isset($request->Full_name)) {
                 $user = $request->validate([
                     "Full_name" => "required|max:45|unique:phatmacist"
                 ]);
-            } else {
-                $user = $request->validate([
-                    "Full_name" => "required|max:45"
-                ]);
+                phatmacist::where('user_id', $user_data->id)->update(array(
+                    'Full_name' => $request->Full_name
+                ));
             }
-            if ($lo->Pharmacy_name == $request->Pharmacy_name) {
+            if (isset($request->Pharmacy_name)) {
                 $user = $request->validate([
-                    "Pharmacy_name" => "required|max:45|string"
+                    "Pharmacy_name" => "required|unique:phatmacist|max:45|string",
                 ]);
-            } else {
-                $user = $request->validate([
-                    "Pharmacy_name" => "required|max:45|string|unique:phatmacist"
-                ]);
+                phatmacist::where('user_id', $user_data->id)->update(array(
+                    'Pharmacy_name' => $request->Pharmacy_name
+                ));
             }
-            location::where('id', $lo->location_id)->update(array('address' => $request->Pharmacy_address, 'city_id' => $request->City));
-            $location = DB::table('location')->where('address', $request->Pharmacy_address)->first();
-            $user = User::where('id', $user_data->id)->update(array(
-                'Phone_number' => $request->Phone_number, 'Email_address' => $request->Email_address, 'password' => Hash::make($request->Password)
-            ));
-            $phatmacist = phatmacist::where('user_id', $user_data->id)->update(array(
-                'Full_name' => $request->Full_name, 'location_id' => $location->id, 'Pharmacy_name' => $request->Pharmacy_name
-            ));
-            return response()->json([
-                "status" => 1,
-                "message" => "succes"
-            ]);
+            if (isset($request->City)) {
+                $user = $request->validate([
+                    "City" => "required|integer",
+                ]);
+                location::where('id', $lo->location_id)->update(array('city_id' => $request->City));
+            }
+            if (isset($request->Pharmacy_address)) {
+                $user = $request->validate([
+                    "Pharmacy_address" => "required|max:45|string"
+                ]);
+                location::where('id', $lo->location_id)->update(array('address' => $request->Pharmacy_address));
+            }
         } else if ($user_data['type'] == 1) {
-            $user = $request->validate([
-                "Password" => ['required', 'string', password::min(8)],
-                "City" => "required|integer",
-                "warehouse_address" => "required|max:45|string"
-            ]);
             $lw = DB::table('owner')->where('user_id',  $user_data->id)->first();
             $lo = DB::table('warehouse')->where('owner',  $lw->id)->first();
-            if ($lo->warehouse_name == $request->warehouse_name) {
+            if (isset($request->City)) {
+                $user = $request->validate([
+                    "City" => "required|integer",
+                ]);
+                location::where('id', $lo->location_id)->update(array('city_id' => $request->City));
+            }
+            if (isset($request->warehouse_address)) {
+                $user = $request->validate([
+                    "warehouse_address" => "required|max:45|string"
+                ]);
+                location::where('id', $lo->location_id)->update(array('address' => $request->warehouse_address));
+            }
+            if (isset($request->warehouse_name)) {
                 $user = $request->validate([
                     "warehouse_name" => "required|max:45|unique:warehouse"
                 ]);
-            } else {
-                $user = $request->validate([
-                    "warehouse_name" => "required|max:45"
-                ]);
+                warehouse::where('owner_id', $lw->id)->update(array(
+                    'warehouse_name' => $request->warehouse_name
+                ));
             }
-            location::where('id', $lo->location_id)->update(array('address' => $request->warehouse_address, 'city_id' => $request->City));
-            $location = DB::table('location')->where('address', $request->warehouse_address)->first();
-            $user = User::where('id', $user_data->id)->update(array(
-                'Phone_number' => $request->Phone_number, 'Email_address' => $request->Email_address, 'password' => Hash::make($request->Password)
-            ));
-            $warehouse = warehouse::where('user_id', $user_data->id)->update(array(
-                'warehouse_name' => $request->warehouse_name, 'location_id' => $location->id
-            ));
-            return response()->json([
-                "status" => 1,
-                "message" => "succes"
-            ]);
         }
+        return response()->json([
+            "status" => 1,
+            "message" => "succes"
+        ]);
     }
     public function logout()
     {
@@ -369,6 +360,25 @@ class MainController extends Controller
                 "message" => "Unauthenticated"
             ]);
         }
+    }
+    public function pharmaciesInfo()
+    {
+        $users = DB::table('users')->where('type', 2)->select('id', 'Email_address', 'Phone_number', 'created_at', 'updated_at')->orderBy('id', 'ASC')->get();
+        foreach ($users as $user) {
+            $phar = DB::table('phatmacist')->where('user_id', $user->id)->first();
+            $location = DB::table('location')->where('id', $phar->location_id)->first();
+            $city = DB::table('city')->where('id', $location->city_id)->first();
+            $user->Full_name = $phar->Full_name;
+            $user->Pharmacy_name = $phar->Pharmacy_name;
+            $user->Pharmacy_address = $location->address;
+            $user->City_name = $city->City_name;
+            $user->City_Arabic_name = $city->City_Arabic_name;
+        }
+        return response()->json([
+            "status" => 1,
+            "message" => "succes",
+            'data' => $users
+        ]);
     }
 }
 

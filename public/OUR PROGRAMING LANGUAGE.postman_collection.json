@@ -55,7 +55,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "3|nlSbXpsXQYUdMrt4IleOg0Pkvg7HsB2vC76JykNd8090857d",
+											"value": "3|JxAV3Lve1s5hT6kwbbIVm63ChX9rz7EH4gNbfDzvda6da6fd",
 											"type": "string"
 										}
 									]
@@ -76,7 +76,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n          \"Full_name\" : \"haseeeeeesan\",\r\n           \"Email_address\":\"hssangh@gmail.com\",\r\n           \"Phone_number\" : \"0903050500\",\r\n            \"Password\" :\"22345634474448\",\r\n            \"Pharmacy_name\" :\"ff\",\r\n            \"City\" : 14,\r\n            \"Pharmacy_address\" : \"dddd\"\r\n}"
+									"raw": "{\r\n          \"Full_name\" : \"haseeeeeesan\",\r\n           \"Email_address\":\"hssangh@gmail.com\",\r\n           \"Phone_number\" : \"0903050500\",\r\n            \"Password\" :\"22345634474448\",\r\n            \"Pharmacy_name\" :\"ff\",\r\n            \"City\" : 14,\r\n            \"Pharmacy_address\" : \"dddd\"\r\n}\r\n/*{\r\n           \"Email_address\":\"hssangh@gmail.com\",\r\n           \"Phone_number\" : \"0903050500\",\r\n            \"Password\" :\"22345634474448\",\r\n            \"warehouse_name\" :\"ff\",\r\n            \"City\" : 14,\r\n            \"warehouse_address\" : \"dddd\"\r\n}*/"
 								},
 								"url": {
 									"raw": "{{url}}/api/update_profile",
@@ -295,6 +295,24 @@
 									"path": [
 										"api",
 										"acceptOwner"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "pharmaciesInfo",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{url}}/api/pharmaciesInfo",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"api",
+										"pharmaciesInfo"
 									]
 								}
 							},
@@ -1170,7 +1188,7 @@
 									}
 								},
 								"url": {
-									"raw": "{{url}}/api/search_product?category=Painkillers & name=سيتامول &phamacist_id=1",
+									"raw": "{{url}}/api/search_product?category=Painkillers & name=s & phamacist_id=1",
 									"host": [
 										"{{url}}"
 									],
@@ -1185,10 +1203,10 @@
 										},
 										{
 											"key": " name",
-											"value": "سيتامول "
+											"value": "s "
 										},
 										{
-											"key": "phamacist_id",
+											"key": " phamacist_id",
 											"value": "1"
 										}
 									]

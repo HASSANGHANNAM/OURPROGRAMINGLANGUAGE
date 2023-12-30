@@ -249,11 +249,14 @@ class productController extends Controller
     }
     public function getAllFavorates(Request $request)
     {
+        $warehouse_id = 1;
+
         $favData = $request->validate([
             "phamacist_id" => "required|integer",
         ]);
         $favPh = DB::table('favorates')->where('phamacist_id', $favData['phamacist_id'])->get();
         foreach ($favPh as $f) {
+            $pware = DB::table('products_warehouse')->where('warehouse_id', $warehouse_id)->where('products_id',  $f->products_id)->first();
             $fda =  DB::table('products')->where('id', $f->products_id)->select('id', 'Price', 'category_id', 'made_by_id', 'image', 'marketing_name', 'scientific_name', 'arabic_name', 'exp_date')->first();
             $madeData = DB::table('made_by')->where('id', $fda->made_by_id)->select('made_by_name', 'made_by_Arabic_name')->first();
             $cateData = DB::table('category')->where('id', $fda->category_id)->select('Category_name', 'Arabic_Category_name')->first();
@@ -268,6 +271,7 @@ class productController extends Controller
             $f->scientific_name = $fda->scientific_name;
             $f->arabic_name = $fda->arabic_name;
             $f->exp_date = $fda->exp_date;
+            $f->Quantity = $pware->Quantity;
         }
         return response()->json([
             "status" => 1,

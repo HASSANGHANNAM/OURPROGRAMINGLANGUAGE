@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Api\productController;
-// TODO: substring search + Quantity 
+
 class searchController extends Controller
 {
     public function search_product()
@@ -21,13 +21,12 @@ class searchController extends Controller
                     $cat_id = DB::table('category')->where('Arabic_Category_name', $category)->first();
                 }
                 if (isset($cat_id)) {
-                    //'keywords','like',"php"
-                    $proDataSearch = DB::table('products')->where('marketing_name', $name)->where('category_id', $cat_id->id)->orderBy('id', 'ASC')->get();
+                    $proDataSearch = DB::table('products')->where('marketing_name', 'LIKE', '%' . $name . '%')->where('category_id', $cat_id->id)->orderBy('id', 'ASC')->get();
                     if (count($proDataSearch) == 0) {
-                        $proDataSearch = DB::table('products')->where('arabic_name', $name)->where('category_id', $cat_id->id)->orderBy('id', 'ASC')->get();
+                        $proDataSearch = DB::table('products')->where('arabic_name', 'LIKE', '%' . $name . '%')->where('category_id', $cat_id->id)->orderBy('id', 'ASC')->get();
                     }
                     if (count($proDataSearch) == 0) {
-                        $proDataSearch = DB::table('products')->where('scientific_name', $name)->where('category_id', $cat_id->id)->orderBy('id', 'ASC')->get();
+                        $proDataSearch = DB::table('products')->where('scientific_name',  'LIKE', '%' . $name . '%')->where('category_id', $cat_id->id)->orderBy('id', 'ASC')->get();
                     }
                     if (count($proDataSearch) != 0) {
 
@@ -69,12 +68,12 @@ class searchController extends Controller
 
                 ]);
             } else {
-                $proDataSearch = DB::table('products')->where('marketing_name', $name)->orderBy('id', 'ASC')->get();
+                $proDataSearch = DB::table('products')->where('marketing_name',  'LIKE', '%' . $name . '%')->orderBy('id', 'ASC')->get();
                 if (count($proDataSearch) == 0) {
-                    $proDataSearch = DB::table('products')->where('arabic_name', $name)->orderBy('id', 'ASC')->get();
+                    $proDataSearch = DB::table('products')->where('arabic_name',  'LIKE', '%' . $name . '%')->orderBy('id', 'ASC')->get();
                 }
                 if (count($proDataSearch) == 0) {
-                    $proDataSearch = DB::table('products')->where('scientific_name', $name)->orderBy('id', 'ASC')->get();
+                    $proDataSearch = DB::table('products')->where('scientific_name', 'LIKE', '%' . $name . '%')->orderBy('id', 'ASC')->get();
                 }
                 if (count($proDataSearch) != 0) {
                     foreach ($proDataSearch as $pd) {

@@ -64,6 +64,7 @@ Route::get('/getAllCategorys', [categoryController::class, 'getAllCategorys']);
 Route::get('/getAllProducts/{phamacist_id}', [productController::class, 'getAllProducts']);
 Route::get('/getAllProductsInbasket/{phamacist_id}', [basketController::class, 'getAllProductsInbasket']);
 Route::get('/getAllProductsToWarehouse/{warehouse_id}', [productController::class, 'getAllProductsToWarehouse']);
+Route::get('/pharmaciesInfo', [MainController::class, 'pharmaciesInfo']);
 Route::get('/getSingleProduct/{phamacist_id}/{products_id}', [productController::class, 'getSingleProduct']);
 Route::get('/getAllFavorates', [productController::class, 'getAllFavorates']);
 Route::get('/getAllOrders/{id}', [orderController::class, 'getAllOrders']);

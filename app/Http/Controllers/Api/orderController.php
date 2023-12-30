@@ -18,7 +18,7 @@ use function Laravel\Prompts\table;
 class orderController extends Controller
 {
     // old funcyion
-    public function create_order(Request $request, $warehouse_id, $phatmacist_id)
+    public function createss_order(Request $request, $warehouse_id, $phatmacist_id)
     {
         $findd = warehouse::find($warehouse_id);
         $findd2 = phatmacist::find($phatmacist_id);
@@ -310,6 +310,7 @@ class orderController extends Controller
         $j = 0;
         $data = [];
         foreach ($orData as $o) {
+            $data[$i]['pharmacy_id'] = $o->phatmacist_id;
             if ($o->status == "On request") {
                 $data[$i]['status'] = 1;
             } else if ($o->status == "In preparation") {
