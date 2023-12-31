@@ -309,7 +309,7 @@ class MainController extends Controller
             $location = DB::table('location')->where('id', $lo->location_id)->first();
 
             if (isset($request->City)) {
-                if ($location->City !== $request->City) {
+                if ($location->city_id !== $request->City) {
 
                     $user = $request->validate([
                         "City" => "required|integer",
@@ -331,7 +331,7 @@ class MainController extends Controller
             $lo = DB::table('warehouse')->where('owner_id',  $lw->id)->first();
             $location = DB::table('location')->where('id', $lo->location_id)->first();
             if (isset($request->City)) {
-                if ($location->City !== $request->City) {
+                if ($location->city_id !== $request->City) {
 
                     $user = $request->validate([
                         "City" => "required|integer",
