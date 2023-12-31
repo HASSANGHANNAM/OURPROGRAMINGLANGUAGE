@@ -12,6 +12,7 @@ return new class extends Migration
             $table->id();
             $table->string('Category_name', 45)->unique()->nullable();
             $table->string('Arabic_Category_name', 45)->unique()->nullable();
+            $table->string('image')->nullable();
             $table->timestamps();
         });
     }

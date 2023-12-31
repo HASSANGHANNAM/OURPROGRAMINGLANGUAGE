@@ -97,7 +97,7 @@ class categoryController extends Controller
     }
     public function getAllCategorys()
     {
-        $categorys = DB::table('category')->select('id', 'Category_name', 'Arabic_Category_name')->orderBy('id', 'ASC')->get();
+        $categorys = DB::table('category')->select('id', 'Category_name', 'Arabic_Category_name', 'image')->orderBy('id', 'ASC')->get();
         return response()->json([
             "status" => 1,
             "message" => "succes",

@@ -133,7 +133,7 @@ class orderController extends Controller
         $ordata = [
             'warehouse_id' => $warehouse_id,
             'phatmacist_id' => $phatmacist_id,
-            'status' => "In preparation",
+            'status' => "On request",
             'payment_status' => "unpaid"
         ];
         $orDa = order::create($ordata);

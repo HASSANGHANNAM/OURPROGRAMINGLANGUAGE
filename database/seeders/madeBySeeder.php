@@ -15,7 +15,9 @@ class madeBySeeder extends Seeder
             ['made_by_name' => "ADAMCO", 'made_by_Arabic_name' => "أداما"],
             ['made_by_name' => "TAMECO", 'made_by_Arabic_name' => "تاميكو"],
             ['made_by_name' => "ARAK FARMA", 'made_by_Arabic_name' => "آراك فارما"],
-            ['made_by_name' => "UNIPHARMA", 'made_by_Arabic_name' => "يوني فارما"]
+            ['made_by_name' => "UNIPHARMA", 'made_by_Arabic_name' => "يوني فارما"],
+            ['made_by_name' => "Neopharma Ind", 'made_by_Arabic_name' => "نيوفارما إند"],
+            ['made_by_name' => "Mediphar", 'made_by_Arabic_name' => "ميدفار"],
         ];
         foreach ($made_by as $made) {
             made_by::create($made);
