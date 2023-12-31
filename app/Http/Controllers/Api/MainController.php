@@ -256,7 +256,7 @@ class MainController extends Controller
     {
         $user_data = auth()->user();
         $userInfo = DB::table('users')->where('id',  $user_data->id)->first();
-        dd($userInfo);
+        // dd($userInfo);
         if (isset($request->Email_address)) {
             if ($userInfo->Email_address !== $request->Email_address) {
                 $user = $request->validate([
