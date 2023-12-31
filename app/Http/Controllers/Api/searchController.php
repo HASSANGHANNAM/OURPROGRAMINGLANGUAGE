@@ -154,6 +154,11 @@ class searchController extends Controller
                 ]);
             }
         }
-        return app('App\Http\Controllers\Api\productController')->getAllProducts($phamacist_id);
+        return response()->json([
+            "status" => 1,
+            "message" => "not found name and category",
+            "data" => []
+        ]);
+        // return app('App\Http\Controllers\Api\productController')->getAllProducts($phamacist_id);
     }
 }
