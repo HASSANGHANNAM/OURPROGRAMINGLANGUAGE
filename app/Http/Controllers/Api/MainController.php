@@ -254,9 +254,9 @@ class MainController extends Controller
     }
     public function update_profile(Request $request)
     {
+        // dd("dd");
         $user_data = auth()->user();
         $userInfo = DB::table('users')->where('id',  $user_data->id)->first();
-        // dd($userInfo);
         if (isset($request->Email_address)) {
             if ($userInfo->Email_address !== $request->Email_address) {
                 $user = $request->validate([
@@ -318,7 +318,7 @@ class MainController extends Controller
                 }
             }
             if (isset($request->Pharmacy_address)) {
-                if ($location->Pharmacy_address !== $request->Pharmacy_address) {
+                if ($location->address !== $request->Pharmacy_address) {
 
                     $user = $request->validate([
                         "Pharmacy_address" => "required|max:45|string"
@@ -340,7 +340,7 @@ class MainController extends Controller
                 }
             }
             if (isset($request->warehouse_address)) {
-                if ($location->warehouse_address !== $request->warehouse_address) {
+                if ($location->address !== $request->warehouse_address) {
 
                     $user = $request->validate([
                         "warehouse_address" => "required|max:45|string"
