@@ -311,6 +311,7 @@ class orderController extends Controller
         $data = [];
         foreach ($orData as $o) {
             $data[$i]['pharmacy_id'] = $o->phatmacist_id;
+            $data[$i]['order_id'] = $o->id;
             if ($o->status == "On request") {
                 $data[$i]['status'] = 1;
             } else if ($o->status == "In preparation") {

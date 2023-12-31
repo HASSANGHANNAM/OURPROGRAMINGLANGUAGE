@@ -373,6 +373,7 @@ class MainController extends Controller
             $user->Pharmacy_address = $location->address;
             $user->City_name = $city->City_name;
             $user->City_Arabic_name = $city->City_Arabic_name;
+            $user->id = $phar->id;
         }
         return response()->json([
             "status" => 1,
