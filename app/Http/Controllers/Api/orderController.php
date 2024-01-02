@@ -192,7 +192,7 @@ class orderController extends Controller
         if ($checkiforderfull == false) {
             DB::table('order')->where('id', $orDa['id'])->delete();
             return response()->json([
-                "status" => 1,
+                "status" => 0,
                 "message" => "order not create because no product to ordered it",
                 "data" => $data
             ]);
@@ -368,7 +368,7 @@ class orderController extends Controller
         if ($request->order_status == 3) {
             $productorder = DB::table('order_products')->where('order_id', $request->order_id)->get();
             foreach ($productorder as $pr) {
-
+                // dd("asd");
                 $pppp = DB::table('products_warehouse')->where('products_id', $pr->Product_id)->where('warehouse_id', $ordata->warehouse_id)->first();
                 products_warehouse::where('id', $pppp->id)->update(array('Quantity' => $pppp->Quantity - $pr->Quantity));
             }

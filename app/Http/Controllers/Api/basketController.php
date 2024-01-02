@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\Product_basket_products;
+use App\Models\warehouse;
 
 class basketController extends Controller
 {
@@ -55,6 +56,8 @@ class basketController extends Controller
     }
     public function getAllProductsInbasket($phamacist_id)
     {
+        $warehouse_id = 1;
+        $findd = warehouse::find($warehouse_id);
         $priceAllproducte = 0;
         $pbPh = DB::table('Product_basket')->where('phatmacist_id', $phamacist_id)->first();
         if ($pbPh == null) {
@@ -75,6 +78,7 @@ class basketController extends Controller
             ]);
         }
         foreach ($proData as $pd) {
+            $checWarehouse = DB::table('products_warehouse')->where('warehouse_id', $warehouse_id)->where('products_id', $pd->Product_id)->first();
             $pdData = DB::table('products')->where('id', $pd->Product_id)->select('id', 'Price', 'category_id', 'made_by_id', 'image', 'marketing_name', 'scientific_name', 'arabic_name', 'exp_date')->first();
             $madeData = DB::table('made_by')->where('id', $pdData->made_by_id)->select('made_by_name', 'made_by_Arabic_name')->first();
             $cateData = DB::table('category')->where('id', $pdData->category_id)->select('Category_name', 'Arabic_Category_name')->first();
@@ -89,6 +93,7 @@ class basketController extends Controller
             $pd->scientific_name = $pdData->scientific_name;
             $pd->arabic_name = $pdData->arabic_name;
             $pd->exp_date = $pdData->exp_date;
+            $pd->allquantity = $checWarehouse->Quantity;
             $priceAllproducte += $pd->PriceAllproducts;
             if ($phamacist_id != null) {
                 $ch = DB::table('favorates')->where('products_id', $pdData->id)->where('phamacist_id', $phamacist_id)->first();
